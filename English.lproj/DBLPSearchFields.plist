@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fields</key>
+	<dict>
+		<key>All Fields</key>
+		<string>[ALL]</string>
+		<key>Title</key>
+		<string>[TI]</string>
+		<key>Title+Abstract</key>
+		<string>[TIAB]</string>
+		<key>Text Words</key>
+		<string>[TW]</string>
+		<key>Author</key>
+		<string>[AU]</string>
+		<key>First Author</key>
+		<string>[1AU]</string>
+		<key>Last Author</key>
+		<string>[LASTAU]</string>
+		<key>Affiliation</key>
+		<string>[AD]</string>
+		<key>Journal</key>
+		<string>[TA]</string>
+		<key>Volume</key>
+		<string>[VI]</string>		
+		<key>Issue</key>
+		<string>[IP]</string>
+		<key>Pages</key>
+		<string>[PG]</string>
+		<key>Date</key>
+		<string>[DP]</string>
+		<key>MeSH Topic</key>
+		<string>[MAJR]</string>		
+		<key>MeSH Term</key>
+		<string>[MH]</string>
+		<key>PMID</key>
+		<string>[PMID]</string>
+		<key>DOI</key>
+		<string>[DOI]</string>
+	</dict>
+	<key>order</key>
+	<array>
+		<string>All Fields</string>
+		<string>SPACER</string>
+		<string>Title</string>
+		<string>Title+Abstract</string>
+		<string>Text Words</string>
+		<string>SPACER</string>
+		<string>Author</string>
+		<string>First Author</string>
+		<string>Last Author</string>
+		<string>Affiliation</string>
+		<string>SPACER</string>
+		<string>Journal</string>
+		<string>Volume</string>
+		<string>Issue</string>
+		<string>Pages</string>
+		<string>Date</string>
+		<string>SPACER</string>
+		<string>MeSH Topic</string>
+		<string>MeSH Term</string>
+		<string>SPACER</string>
+		<string>PMID</string>
+		<string>DOI</string>
+	</array>
+</dict>
+</plist>
+
+

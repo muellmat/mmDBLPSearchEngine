@@ -5,26 +5,38 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
 	<key>CFBundleExecutable</key>
-	<string>${EXECUTABLE_NAME}</string>
+	<string>DBLPSearchEngine</string>
 	<key>CFBundleIconFile</key>
-	<string>bundle</string>
+	<string>searchengine</string>
 	<key>CFBundleIdentifier</key>
-	<string>de.uni-tuebingen.informatik.www-db.${PRODUCT_NAME:rfc1034Identifier}</string>
+	<string>com.mekentosj.papers.DBLPSearchEngine</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>BNDL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>MTPX</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>1.0</string>
 	<key>NSMainNibFile</key>
 	<string>Panel</string>
 	<key>NSPrincipalClass</key>
 	<string>mmDBLPSearchEngine</string>
+	<key>PapersAuthorContact</key>
+	<string>muellmat@informatik.uni-tuebingen.de</string>
+	<key>PapersAuthorName</key>
+	<string>Matthias Müller</string>
+	<key>PapersAuthorWebsite</key>
+	<string>http://www-db.informatik.uni-tuebingen.de</string>
+	<key>PapersMinimumAppVersion</key>
+	<string>1.5</string>
+	<key>PapersMinimumOSVersion</key>
+	<string>10.5</string>
+	<key>PapersPluginCategory</key>
+	<string>Database</string>
+	<key>PapersPluginDescription</key>
+	<string>Searches DBLP from within Papers</string>
+	<key>PapersPluginName</key>
+	<string>DBLP</string>
 </dict>
 </plist>

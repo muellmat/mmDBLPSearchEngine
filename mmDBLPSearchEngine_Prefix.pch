@@ -1,7 +1,8 @@
 //
-// Prefix header for all source files of the 'mmDBLPSearchEngine' target in the 'mmDBLPSearchEngine' project.
+// Prefix header for all source files
 //
 
 #ifdef __OBJC__
-    #import <Cocoa/Cocoa.h>
+    #import <Foundation/Foundation.h>
+    #import <AppKit/AppKit.h>
 #endif

@@ -3,31 +3,73 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 42;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		39271F21119E91CB00D67F8D /* plugin.icns in Resources */ = {isa = PBXBuildFile; fileRef = 39271F20119E91CB00D67F8D /* plugin.icns */; };
-		39271F25119E91D900D67F8D /* mmDBLPSearchEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = 39271F24119E91D900D67F8D /* mmDBLPSearchEngine.m */; };
-		39271F2F119E923E00D67F8D /* Panel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 39271F2D119E923E00D67F8D /* Panel.xib */; };
+		3949D4FC11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */; };
+		399ACDA611A54C4D00D7A73F /* Panel.xib in Resources */ = {isa = PBXBuildFile; fileRef = 399ACDA411A54C4D00D7A73F /* Panel.xib */; };
+		399ACDD411A54E6500D7A73F /* DBLP.h in Headers */ = {isa = PBXBuildFile; fileRef = 399ACDCF11A54E6500D7A73F /* DBLP.h */; };
+		399ACDD511A54E6500D7A73F /* DBLP.m in Sources */ = {isa = PBXBuildFile; fileRef = 399ACDD011A54E6500D7A73F /* DBLP.m */; };
+		399ACDD611A54E6500D7A73F /* notes.txt in Resources */ = {isa = PBXBuildFile; fileRef = 399ACDD111A54E6500D7A73F /* notes.txt */; };
+		399ACDD711A54E6500D7A73F /* WSGeneratedObj.h in Headers */ = {isa = PBXBuildFile; fileRef = 399ACDD211A54E6500D7A73F /* WSGeneratedObj.h */; };
+		399ACDD811A54E6500D7A73F /* WSGeneratedObj.m in Sources */ = {isa = PBXBuildFile; fileRef = 399ACDD311A54E6500D7A73F /* WSGeneratedObj.m */; };
+		399ACE0411A5540300D7A73F /* group_pubmed_small.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACDFC11A5540300D7A73F /* group_pubmed_small.tif */; };
+		399ACE0511A5540300D7A73F /* group_pubmed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACDFD11A5540300D7A73F /* group_pubmed.tif */; };
+		399ACE0611A5540300D7A73F /* logo_pubmed_basic.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACDFE11A5540300D7A73F /* logo_pubmed_basic.tif */; };
+		399ACE0711A5540300D7A73F /* logo_pubmed_large.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACDFF11A5540300D7A73F /* logo_pubmed_large.tif */; };
+		399ACE0811A5540300D7A73F /* logo_pubmed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACE0011A5540300D7A73F /* logo_pubmed.tif */; };
+		399ACE0911A5540300D7A73F /* searchengine.icns in Resources */ = {isa = PBXBuildFile; fileRef = 399ACE0111A5540300D7A73F /* searchengine.icns */; };
+		399ACE0A11A5540300D7A73F /* statusbar_pubmed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACE0211A5540300D7A73F /* statusbar_pubmed.tif */; };
+		399ACE0B11A5540300D7A73F /* toolstrip_pubmed.tif in Resources */ = {isa = PBXBuildFile; fileRef = 399ACE0311A5540300D7A73F /* toolstrip_pubmed.tif */; };
 		8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C167DFE841241C02AAC07 /* InfoPlist.strings */; };
-		8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
+		8D5B49B2048680CD000E48DA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 08FB77B6FE84183AC02AAC07 /* main.m */; settings = {ATTRIBUTES = (); }; };
+		A60804F80C722F140021CB27 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = A60804F70C722F140021CB27 /* Localizable.strings */; };
+		A61AB3440B658CDC0027D08B /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A61AB3430B658CDC0027D08B /* Cocoa.framework */; };
+		A65E40EC0C3BF80E0058B6CC /* PapersSearchPluginProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = A65E40EA0C3BF80E0058B6CC /* PapersSearchPluginProtocol.h */; };
+		A65E40EF0C3BF8180058B6CC /* mmDBLPSearchEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = A65E40ED0C3BF8180058B6CC /* mmDBLPSearchEngine.h */; };
+		A65E40F00C3BF8180058B6CC /* mmDBLPSearchEngine.m in Sources */ = {isa = PBXBuildFile; fileRef = A65E40EE0C3BF8180058B6CC /* mmDBLPSearchEngine.m */; };
+		A65E42BC0C3C402E0058B6CC /* DBLPPredefinedTokens.plist in Resources */ = {isa = PBXBuildFile; fileRef = A65E42B80C3C402D0058B6CC /* DBLPPredefinedTokens.plist */; };
+		A65E42BD0C3C402E0058B6CC /* DBLPCharacterConversions.plist in Resources */ = {isa = PBXBuildFile; fileRef = A65E42BA0C3C402D0058B6CC /* DBLPCharacterConversions.plist */; };
+		A65E42C50C3C41060058B6CC /* DBLPSearchFields.plist in Resources */ = {isa = PBXBuildFile; fileRef = A65E42C30C3C41060058B6CC /* DBLPSearchFields.plist */; };
+		A65E42CD0C3C412F0058B6CC /* DBLPStopWords.plist in Resources */ = {isa = PBXBuildFile; fileRef = A65E42CB0C3C412F0058B6CC /* DBLPStopWords.plist */; };
+		A66DC72D0C49034A00ADF237 /* NSString_Extensions.h in Headers */ = {isa = PBXBuildFile; fileRef = A66DC72B0C49034A00ADF237 /* NSString_Extensions.h */; };
+		A66DC72E0C49034A00ADF237 /* NSString_Extensions.m in Sources */ = {isa = PBXBuildFile; fileRef = A66DC72C0C49034A00ADF237 /* NSString_Extensions.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		089C1672FE841209C02AAC07 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
-		1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		32DBCF630370AF2F00C91783 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
-		39271F20119E91CB00D67F8D /* plugin.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = plugin.icns; sourceTree = "<group>"; };
-		39271F22119E91D300D67F8D /* PapersSearchPluginProtocol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PapersSearchPluginProtocol.h; sourceTree = "<group>"; };
-		39271F23119E91D900D67F8D /* mmDBLPSearchEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine.h; sourceTree = "<group>"; };
-		39271F24119E91D900D67F8D /* mmDBLPSearchEngine.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mmDBLPSearchEngine.m; sourceTree = "<group>"; };
-		39271F2E119E923E00D67F8D /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Panel.xib; sourceTree = "<group>"; };
-		8D5B49B6048680CD000E48DA /* mmDBLPSearchEngine.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mmDBLPSearchEngine.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
+		08FB77B6FE84183AC02AAC07 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
+		399ACDA511A54C4D00D7A73F /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/Panel.xib; sourceTree = "<group>"; };
+		399ACDCF11A54E6500D7A73F /* DBLP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DBLP.h; sourceTree = "<group>"; };
+		399ACDD011A54E6500D7A73F /* DBLP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DBLP.m; sourceTree = "<group>"; };
+		399ACDD111A54E6500D7A73F /* notes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
+		399ACDD211A54E6500D7A73F /* WSGeneratedObj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSGeneratedObj.h; sourceTree = "<group>"; };
+		399ACDD311A54E6500D7A73F /* WSGeneratedObj.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WSGeneratedObj.m; sourceTree = "<group>"; };
+		399ACDFC11A5540300D7A73F /* group_pubmed_small.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = group_pubmed_small.tif; sourceTree = "<group>"; };
+		399ACDFD11A5540300D7A73F /* group_pubmed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = group_pubmed.tif; sourceTree = "<group>"; };
+		399ACDFE11A5540300D7A73F /* logo_pubmed_basic.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = logo_pubmed_basic.tif; sourceTree = "<group>"; };
+		399ACDFF11A5540300D7A73F /* logo_pubmed_large.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = logo_pubmed_large.tif; sourceTree = "<group>"; };
+		399ACE0011A5540300D7A73F /* logo_pubmed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = logo_pubmed.tif; sourceTree = "<group>"; };
+		399ACE0111A5540300D7A73F /* searchengine.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = searchengine.icns; sourceTree = "<group>"; };
+		399ACE0211A5540300D7A73F /* statusbar_pubmed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = statusbar_pubmed.tif; sourceTree = "<group>"; };
+		399ACE0311A5540300D7A73F /* toolstrip_pubmed.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = toolstrip_pubmed.tif; sourceTree = "<group>"; };
+		39EE77E311A5491F00CEAE6A /* DBLPSearchEngine.searchengine */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DBLPSearchEngine.searchengine; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		A60804F30C722EFD0021CB27 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
+		A61AB3430B658CDC0027D08B /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		A65E40EA0C3BF80E0058B6CC /* PapersSearchPluginProtocol.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PapersSearchPluginProtocol.h; sourceTree = "<group>"; };
+		A65E40ED0C3BF8180058B6CC /* mmDBLPSearchEngine.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine.h; sourceTree = "<group>"; };
+		A65E40EE0C3BF8180058B6CC /* mmDBLPSearchEngine.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = mmDBLPSearchEngine.m; sourceTree = "<group>"; };
+		A65E42B90C3C402D0058B6CC /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = English; path = English.lproj/DBLPPredefinedTokens.plist; sourceTree = "<group>"; };
+		A65E42BB0C3C402D0058B6CC /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = English; path = English.lproj/DBLPCharacterConversions.plist; sourceTree = "<group>"; };
+		A65E42C40C3C41060058B6CC /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = English; path = English.lproj/DBLPSearchFields.plist; sourceTree = "<group>"; };
+		A65E42CC0C3C412F0058B6CC /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = English; path = English.lproj/DBLPStopWords.plist; sourceTree = "<group>"; };
+		A66DC72B0C49034A00ADF237 /* NSString_Extensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NSString_Extensions.h; sourceTree = "<group>"; };
+		A66DC72C0C49034A00ADF237 /* NSString_Extensions.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = NSString_Extensions.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,14 +77,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D5B49B4048680CD000E48DA /* Cocoa.framework in Frameworks */,
+				A61AB3440B658CDC0027D08B /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		089C166AFE841209C02AAC07 /* mmDBLPSearchEngine */ = {
+		089C166AFE841209C02AAC07 /* ORF Marker */ = {
 			isa = PBXGroup;
 			children = (
 				08FB77AFFE84173DC02AAC07 /* Classes */,
@@ -51,7 +93,7 @@
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
 			);
-			name = mmDBLPSearchEngine;
+			name = "ORF Marker";
 			sourceTree = "<group>";
 		};
 		089C1671FE841209C02AAC07 /* Frameworks and Libraries */ = {
@@ -66,8 +108,9 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				39271F2D119E923E00D67F8D /* Panel.xib */,
-				39271F20119E91CB00D67F8D /* plugin.icns */,
+				399ACDA911A54C6600D7A73F /* Strings */,
+				399ACDA211A54C0C00D7A73F /* Images */,
+				399ACDA411A54C4D00D7A73F /* Panel.xib */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
 			);
@@ -77,8 +120,11 @@
 		08FB77AFFE84173DC02AAC07 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				39271F23119E91D900D67F8D /* mmDBLPSearchEngine.h */,
-				39271F24119E91D900D67F8D /* mmDBLPSearchEngine.m */,
+				A65E40ED0C3BF8180058B6CC /* mmDBLPSearchEngine.h */,
+				A65E40EE0C3BF8180058B6CC /* mmDBLPSearchEngine.m */,
+				A66DC72B0C49034A00ADF237 /* NSString_Extensions.h */,
+				A66DC72C0C49034A00ADF237 /* NSString_Extensions.m */,
+				399ACDCE11A54E6500D7A73F /* DBLP-WS */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -86,7 +132,7 @@
 		1058C7ACFEA557BF11CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */,
+				A61AB3430B658CDC0027D08B /* Cocoa.framework */,
 			);
 			name = "Linked Frameworks";
 			sourceTree = "<group>";
@@ -94,9 +140,8 @@
 		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				089C167FFE841241C02AAC07 /* AppKit.framework */,
-				D2F7E65807B2D6F200F64583 /* CoreData.framework */,
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
+				089C167FFE841241C02AAC07 /* AppKit.framework */,
 			);
 			name = "Other Frameworks";
 			sourceTree = "<group>";
@@ -104,7 +149,7 @@
 		19C28FB8FE9D52D311CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8D5B49B6048680CD000E48DA /* mmDBLPSearchEngine.bundle */,
+				39EE77E311A5491F00CEAE6A /* DBLPSearchEngine.searchengine */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -112,19 +157,76 @@
 		32C88E010371C26100C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				39271F22119E91D300D67F8D /* PapersSearchPluginProtocol.h */,
-				32DBCF630370AF2F00C91783 /* mmDBLPSearchEngine_Prefix.pch */,
+				3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */,
+				A65E40EA0C3BF80E0058B6CC /* PapersSearchPluginProtocol.h */,
+				08FB77B6FE84183AC02AAC07 /* main.m */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
 		};
+		399ACDA211A54C0C00D7A73F /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				399ACE0111A5540300D7A73F /* searchengine.icns */,
+				399ACDFC11A5540300D7A73F /* group_pubmed_small.tif */,
+				399ACDFD11A5540300D7A73F /* group_pubmed.tif */,
+				399ACDFE11A5540300D7A73F /* logo_pubmed_basic.tif */,
+				399ACDFF11A5540300D7A73F /* logo_pubmed_large.tif */,
+				399ACE0011A5540300D7A73F /* logo_pubmed.tif */,
+				399ACE0211A5540300D7A73F /* statusbar_pubmed.tif */,
+				399ACE0311A5540300D7A73F /* toolstrip_pubmed.tif */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
+		399ACDA911A54C6600D7A73F /* Strings */ = {
+			isa = PBXGroup;
+			children = (
+				A60804F70C722F140021CB27 /* Localizable.strings */,
+				A65E42B80C3C402D0058B6CC /* DBLPPredefinedTokens.plist */,
+				A65E42BA0C3C402D0058B6CC /* DBLPCharacterConversions.plist */,
+				A65E42CB0C3C412F0058B6CC /* DBLPStopWords.plist */,
+				A65E42C30C3C41060058B6CC /* DBLPSearchFields.plist */,
+			);
+			name = Strings;
+			sourceTree = "<group>";
+		};
+		399ACDCE11A54E6500D7A73F /* DBLP-WS */ = {
+			isa = PBXGroup;
+			children = (
+				399ACDD111A54E6500D7A73F /* notes.txt */,
+				399ACDCF11A54E6500D7A73F /* DBLP.h */,
+				399ACDD011A54E6500D7A73F /* DBLP.m */,
+				399ACDD211A54E6500D7A73F /* WSGeneratedObj.h */,
+				399ACDD311A54E6500D7A73F /* WSGeneratedObj.m */,
+			);
+			path = "DBLP-WS";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		8D5B49AD048680CD000E48DA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A65E40EC0C3BF80E0058B6CC /* PapersSearchPluginProtocol.h in Headers */,
+				A65E40EF0C3BF8180058B6CC /* mmDBLPSearchEngine.h in Headers */,
+				A66DC72D0C49034A00ADF237 /* NSString_Extensions.h in Headers */,
+				3949D4FC11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch in Headers */,
+				399ACDD411A54E6500D7A73F /* DBLP.h in Headers */,
+				399ACDD711A54E6500D7A73F /* WSGeneratedObj.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		8D5B49AC048680CD000E48DA /* mmDBLPSearchEngine */ = {
+		8D5B49AC048680CD000E48DA /* DBLPSearchEngine */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "mmDBLPSearchEngine" */;
+			buildConfigurationList = A65AD4F609A4AE9B0061BB58 /* Build configuration list for PBXNativeTarget "DBLPSearchEngine" */;
 			buildPhases = (
+				8D5B49AD048680CD000E48DA /* Headers */,
 				8D5B49AF048680CD000E48DA /* Resources */,
 				8D5B49B1048680CD000E48DA /* Sources */,
 				8D5B49B3048680CD000E48DA /* Frameworks */,
@@ -133,10 +235,10 @@
 			);
 			dependencies = (
 			);
-			name = mmDBLPSearchEngine;
+			name = DBLPSearchEngine;
 			productInstallPath = "$(HOME)/Library/Bundles";
-			productName = mmDBLPSearchEngine;
-			productReference = 8D5B49B6048680CD000E48DA /* mmDBLPSearchEngine.bundle */;
+			productName = "ORF Marker";
+			productReference = 39EE77E311A5491F00CEAE6A /* DBLPSearchEngine.searchengine */;
 			productType = "com.apple.product-type.bundle";
 		};
 /* End PBXNativeTarget section */
@@ -144,17 +246,14 @@
 /* Begin PBXProject section */
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
-			attributes = {
-				ORGANIZATIONNAME = muellmat;
-			};
-			buildConfigurationList = 1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "mmDBLPSearchEngine" */;
-			compatibilityVersion = "Xcode 3.1";
+			buildConfigurationList = A65AD4FA09A4AE9B0061BB58 /* Build configuration list for PBXProject "mmDBLPSearchEngine" */;
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
-			mainGroup = 089C166AFE841209C02AAC07 /* mmDBLPSearchEngine */;
+			mainGroup = 089C166AFE841209C02AAC07 /* ORF Marker */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8D5B49AC048680CD000E48DA /* mmDBLPSearchEngine */,
+				8D5B49AC048680CD000E48DA /* DBLPSearchEngine */,
 			);
 		};
 /* End PBXProject section */
@@ -165,8 +264,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				8D5B49B0048680CD000E48DA /* InfoPlist.strings in Resources */,
-				39271F21119E91CB00D67F8D /* plugin.icns in Resources */,
-				39271F2F119E923E00D67F8D /* Panel.xib in Resources */,
+				A65E42BC0C3C402E0058B6CC /* DBLPPredefinedTokens.plist in Resources */,
+				A65E42BD0C3C402E0058B6CC /* DBLPCharacterConversions.plist in Resources */,
+				A65E42C50C3C41060058B6CC /* DBLPSearchFields.plist in Resources */,
+				A65E42CD0C3C412F0058B6CC /* DBLPStopWords.plist in Resources */,
+				A60804F80C722F140021CB27 /* Localizable.strings in Resources */,
+				399ACDA611A54C4D00D7A73F /* Panel.xib in Resources */,
+				399ACDD611A54E6500D7A73F /* notes.txt in Resources */,
+				399ACE0411A5540300D7A73F /* group_pubmed_small.tif in Resources */,
+				399ACE0511A5540300D7A73F /* group_pubmed.tif in Resources */,
+				399ACE0611A5540300D7A73F /* logo_pubmed_basic.tif in Resources */,
+				399ACE0711A5540300D7A73F /* logo_pubmed_large.tif in Resources */,
+				399ACE0811A5540300D7A73F /* logo_pubmed.tif in Resources */,
+				399ACE0911A5540300D7A73F /* searchengine.icns in Resources */,
+				399ACE0A11A5540300D7A73F /* statusbar_pubmed.tif in Resources */,
+				399ACE0B11A5540300D7A73F /* toolstrip_pubmed.tif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -177,7 +289,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39271F25119E91D900D67F8D /* mmDBLPSearchEngine.m in Sources */,
+				8D5B49B2048680CD000E48DA /* main.m in Sources */,
+				A65E40F00C3BF8180058B6CC /* mmDBLPSearchEngine.m in Sources */,
+				A66DC72E0C49034A00ADF237 /* NSString_Extensions.m in Sources */,
+				399ACDD511A54E6500D7A73F /* DBLP.m in Sources */,
+				399ACDD811A54E6500D7A73F /* WSGeneratedObj.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,96 +308,229 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		39271F2D119E923E00D67F8D /* Panel.xib */ = {
+		399ACDA411A54C4D00D7A73F /* Panel.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				39271F2E119E923E00D67F8D /* English */,
+				399ACDA511A54C4D00D7A73F /* English */,
 			);
 			name = Panel.xib;
+			sourceTree = "<group>";
+		};
+		A60804F70C722F140021CB27 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A60804F30C722EFD0021CB27 /* English */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		A65E42B80C3C402D0058B6CC /* DBLPPredefinedTokens.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A65E42B90C3C402D0058B6CC /* English */,
+			);
+			name = DBLPPredefinedTokens.plist;
+			sourceTree = "<group>";
+		};
+		A65E42BA0C3C402D0058B6CC /* DBLPCharacterConversions.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A65E42BB0C3C402D0058B6CC /* English */,
+			);
+			name = DBLPCharacterConversions.plist;
+			sourceTree = "<group>";
+		};
+		A65E42C30C3C41060058B6CC /* DBLPSearchFields.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A65E42C40C3C41060058B6CC /* English */,
+			);
+			name = DBLPSearchFields.plist;
+			sourceTree = "<group>";
+		};
+		A65E42CB0C3C412F0058B6CC /* DBLPStopWords.plist */ = {
+			isa = PBXVariantGroup;
+			children = (
+				A65E42CC0C3C412F0058B6CC /* English */,
+			);
+			name = DBLPStopWords.plist;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		1DEB913B08733D840010E9CD /* Debug */ = {
+		A60804BC0C7227F40021CB27 /* Development + Install */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
+				CONFIGURATION_BUILD_DIR = "$(HOME)/Library/Application Support/Papers/PlugIns/SearchEngines/";
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Versions/A/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_TRIGRAPHS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = mmDBLPSearchEngine_Prefix.pch;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PRODUCT_NAME = mmDBLPSearchEngine;
+				INSTALL_PATH = "$(HOME)/Library/Application\\ Support/Papers/PlugIns/SearchEngines/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DBLPSearchEngine;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
 				WRAPPER_EXTENSION = searchengine;
+				ZERO_LINK = YES;
 			};
-			name = Debug;
+			name = "Development + Install";
 		};
-		1DEB913C08733D840010E9CD /* Release */ = {
+		A60804BD0C7227F40021CB27 /* Development + Install */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
+			};
+			name = "Development + Install";
+		};
+		A65AD4F709A4AE9B0061BB58 /* Development */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Versions/A/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_TRIGRAPHS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = mmDBLPSearchEngine_Prefix.pch;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Library/Application\\ Support/Papers/PlugIns/SearchEngines/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DBLPSearchEngine;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = searchengine;
+				ZERO_LINK = YES;
+			};
+			name = Development;
+		};
+		A65AD4F809A4AE9B0061BB58 /* Deployment */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/Quartz.framework/Versions/A/Frameworks",
+					"$(SYSTEM_LIBRARY_DIR)/Frameworks/",
+				);
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_ENABLE_TRIGRAPHS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = mmDBLPSearchEngine_Prefix.pch;
+				GCC_WARN_FOUR_CHARACTER_CONSTANTS = NO;
+				GCC_WARN_UNKNOWN_PRAGMAS = NO;
+				HEADER_SEARCH_PATHS = "";
 				INFOPLIST_FILE = Info.plist;
-				INSTALL_PATH = "$(HOME)/Library/Bundles";
-				PRODUCT_NAME = mmDBLPSearchEngine;
-				WRAPPER_EXTENSION = bundle;
+				INSTALL_PATH = "$(HOME)/Library/Application Support/Papers/PlugIns/SearchEngines/";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_2)",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DBLPSearchEngine;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = searchengine;
+				ZERO_LINK = NO;
 			};
-			name = Release;
+			name = Deployment;
 		};
-		1DEB913F08733D840010E9CD /* Debug */ = {
+		A65AD4FB09A4AE9B0061BB58 /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
-			name = Debug;
+			name = Development;
 		};
-		1DEB914008733D840010E9CD /* Release */ = {
+		A65AD4FC09A4AE9B0061BB58 /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				PREBINDING = NO;
-				SDKROOT = macosx10.6;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 			};
-			name = Release;
+			name = Deployment;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1DEB913A08733D840010E9CD /* Build configuration list for PBXNativeTarget "mmDBLPSearchEngine" */ = {
+		A65AD4F609A4AE9B0061BB58 /* Build configuration list for PBXNativeTarget "DBLPSearchEngine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB913B08733D840010E9CD /* Debug */,
-				1DEB913C08733D840010E9CD /* Release */,
+				A65AD4F709A4AE9B0061BB58 /* Development */,
+				A60804BC0C7227F40021CB27 /* Development + Install */,
+				A65AD4F809A4AE9B0061BB58 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Development;
 		};
-		1DEB913E08733D840010E9CD /* Build configuration list for PBXProject "mmDBLPSearchEngine" */ = {
+		A65AD4FA09A4AE9B0061BB58 /* Build configuration list for PBXProject "mmDBLPSearchEngine" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				1DEB913F08733D840010E9CD /* Debug */,
-				1DEB914008733D840010E9CD /* Release */,
+				A65AD4FB09A4AE9B0061BB58 /* Development */,
+				A60804BD0C7227F40021CB27 /* Development + Install */,
+				A65AD4FC09A4AE9B0061BB58 /* Deployment */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Development;
 		};
 /* End XCConfigurationList section */
 	};

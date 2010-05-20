@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Ages</key>
+	<dict>
+		<key>80 and over: 80+ years</key>
+		<string>80 and over[sb]</string>
+		<key>Adolescent: 13 - 18 years</key>
+		<string>adolescent[sb]</string>
+		<key>Adult: 19 - 44 years</key>
+		<string>adult[sb]</string>
+		<key>Aged: 65+ years</key>
+		<string>aged[sb]</string>
+		<key>All Adult: 19+ years</key>
+		<string>all adult[sb]</string>
+		<key>All Child: 0 - 18 years</key>
+		<string>all child[sb]</string>
+		<key>All Infant: birth - 23 months</key>
+		<string>all infant[sb]</string>
+		<key>Child: 6 - 12 years</key>
+		<string>child[sb]</string>
+		<key>Infant: 1 - 23 months</key>
+		<string>infant[sb]</string>
+		<key>Middle Aged + Aged: 45+ years</key>
+		<string>middle aged[sb] AND aged[sb]</string>
+		<key>Middle Aged: 45 - 64 years</key>
+		<string>middle aged[sb]</string>
+		<key>Newborn: birth - 1 month</key>
+		<string>newborn[sb]</string>
+		<key>Preschool Child: 2 - 5 years</key>
+		<string>preschool child[sb]</string>
+	</dict>
+	<key>Availability</key>
+	<dict>
+		<key>Free Full Text</key>
+		<string>free full text[sb]</string>
+		<key>Full Text</key>
+		<string>full text[sb]</string>
+		<key>Has Abstract</key>
+		<string>hasabstract</string>
+		<key>PubMed Central</key>
+		<string>pubmed pmc local[sb]</string>
+	</dict>
+	<key>Citation Status</key>
+	<dict>
+		<key>In Process</key>
+		<string>in process[sb]</string>
+		<key>Medline</key>
+		<string>medline[sb]</string>
+		<key>Old Medline</key>
+		<string>oldmedline[sb]</string>
+		<key>Publisher</key>
+		<string>publisher[sb]</string>
+		<key>Pubmed not Medline</key>
+		<string>pubmednotmedline[sb]</string>
+	</dict>
+	<key>Comments and Corrections</key>
+	<dict>
+		<key>Corrected and republished from:</key>
+		<string>hascorrectedrepublishedfrom</string>
+		<key>Corrected and republished in:</key>
+		<string>hascorrectedrepublishedin</string>
+		<key>Erratum for:</key>
+		<string>haserratumfor</string>
+		<key>Erratum in:</key>
+		<string>haserratumin</string>
+		<key>Has Comment in:</key>
+		<string>hascommentin</string>
+		<key>Has Comment on:</key>
+		<string>hascommenton</string>
+		<key>Original Report in:</key>
+		<string>hasoriginalreportin</string>
+		<key>Republished from:</key>
+		<string>hasrepublishedfrom</string>
+		<key>Republished in:</key>
+		<string>hasrepublishedin</string>
+		<key>Retraction in:</key>
+		<string>hasretractionin</string>
+		<key>Retraction of:</key>
+		<string>hasretractionof</string>
+		<key>Summary for patients in:</key>
+		<string>hassummaryforpatientsin</string>
+		<key>Update in:</key>
+		<string>hasupdatein</string>
+		<key>Update of:</key>
+		<string>hasupdateof</string>
+	</dict>
+	<key>Gender</key>
+	<dict>
+		<key>Female</key>
+		<string>female[sb]</string>
+		<key>Male</key>
+		<string>male[sb]</string>
+	</dict>
+	<key>Journal/Citation Subset</key>
+	<dict>
+		<key>AIDS/HIV</key>
+		<string>jsubsetx</string>
+		<key>Bioethics</key>
+		<string>jsubsete</string>
+		<key>Consumer Health</key>
+		<string>jsubsetk</string>
+		<key>Dentistry</key>
+		<string>jsubsetd</string>
+		<key>Health Administration</key>
+		<string>jsubseth</string>
+		<key>Health Technology</key>
+		<string>jsubsett</string>
+		<key>History of Medicine</key>
+		<string>jsubsetq</string>
+		<key>Nursing</key>
+		<string>jsubsetn</string>
+		<key>Space Life Sciences</key>
+		<string>jsubsets</string>
+	</dict>
+	<key>Language</key>
+	<dict>
+		<key>Chinese</key>
+		<string>chinese[la]</string>
+		<key>Dutch</key>
+		<string>dutch[la]</string>
+		<key>English</key>
+		<string>english[la]</string>
+		<key>French</key>
+		<string>french[la]</string>
+		<key>German</key>
+		<string>german[la]</string>
+		<key>Italian</key>
+		<string>italian[la]</string>
+		<key>Japanese</key>
+		<string>japanese[la]</string>
+		<key>Portuguese</key>
+		<string>portuguese[la]</string>
+		<key>Russian</key>
+		<string>russian[la]</string>
+		<key>Spanish</key>
+		<string>spanish[la]</string>
+	</dict>
+	<key>MeSH Terms</key>
+	<dict>
+		<key>Abnormalities</key>
+		<string>ab[sh]</string>
+		<key>Administration and Dosage</key>
+		<string>ad[sh]</string>
+		<key>Adverse Effects</key>
+		<string>ae[sh]</string>
+		<key>Agonists</key>
+		<string>ag[sh]</string>
+		<key>Analogs and Derivatives</key>
+		<string>aa[sh]</string>
+		<key>Analysis</key>
+		<string>an[sh]</string>
+		<key>Anatomy and Histology</key>
+		<string>ah[sh]</string>
+		<key>Antagonists and Inhibitors</key>
+		<string>ai[sh]</string>
+		<key>Biosynthesis</key>
+		<string>bi[sh]</string>
+		<key>Blood Supply</key>
+		<string>bs[sh]</string>
+		<key>Blood</key>
+		<string>bl[sh]</string>
+		<key>Cerebrospinal Fluid</key>
+		<string>cf[sh]</string>
+		<key>Chemical Synthesis</key>
+		<string>cs[sh]</string>
+		<key>Chemically Induced</key>
+		<string>ci[sh]</string>
+		<key>Chemistry</key>
+		<string>ch[sh]</string>
+		<key>Classification</key>
+		<string>cl[sh]</string>
+		<key>Complications</key>
+		<string>co[sh]</string>
+		<key>Congenital</key>
+		<string>cn[sh]</string>
+		<key>Contraindications</key>
+		<string>ct[sh]</string>
+		<key>Cytology</key>
+		<string>cy[sh]</string>
+		<key>Deficiency</key>
+		<string>df[sh]</string>
+		<key>Diagnosis</key>
+		<string>di[sh]</string>
+		<key>Diagnostic Use</key>
+		<string>du[sh]</string>
+		<key>Diet Therapy</key>
+		<string>dh[sh]</string>
+		<key>Drug Effects</key>
+		<string>de[sh]</string>
+		<key>Drug Therapy</key>
+		<string>dt[sh]</string>
+		<key>Economics</key>
+		<string>ec[sh]</string>
+		<key>Education</key>
+		<string>ed[sh]</string>
+		<key>Embryology</key>
+		<string>em[sh]</string>
+		<key>Enzymology</key>
+		<string>en[sh]</string>
+		<key>Epidemiology</key>
+		<string>ep[sh]</string>
+		<key>Ethics</key>
+		<string>es[sh]</string>
+		<key>Ethnology</key>
+		<string>eh[sh]</string>
+		<key>Etiology</key>
+		<string>et[sh]</string>
+		<key>Genetics</key>
+		<string>ge[sh]</string>
+		<key>Growth and Development</key>
+		<string>gd[sh]</string>
+		<key>History</key>
+		<string>hi[sh]</string>
+		<key>Immunology</key>
+		<string>im[sh]</string>
+		<key>Injuries</key>
+		<string>in[sh]</string>	
+		<key>Innervation</key>
+		<string>ir[sh]</string>	
+		<key>Instrumentation</key>
+		<string>is[sh]</string>	
+		<key>Isolation and Purification</key>
+		<string>ip[sh]</string>	
+		<key>Legislation and Jurisprudence</key>
+		<string>lj[sh]</string>	
+		<key>Manpower</key>
+		<string>ma[sh]</string>	
+		<key>Metabolism</key>
+		<string>me[sh]</string>	
+		<key>Methods</key>
+		<string>mt[sh]</string>	
+		<key>Microbiology</key>
+		<string>mi[sh]</string>	
+		<key>Mortality</key>
+		<string>mo[sh]</string>	
+		<key>Nursing</key>
+		<string>nu[sh]</string>	
+		<key>Organization and Administration</key>
+		<string>og[sh]</string>	
+		<key>Parasitology</key>
+		<string>ps[sh]</string>	
+		<key>Pathogenicity</key>
+		<string>py[sh]</string>	
+		<key>Pathology</key>
+		<string>pa[sh]</string>	
+		<key>Pharmacokinetics</key>
+		<string>pk[sh]</string>	
+		<key>Pharmacology</key>
+		<string>pd[sh]</string>	
+		<key>Physiology</key>
+		<string>ph[sh]</string>	
+		<key>Physiopathology</key>
+		<string>pp[sh]</string>	
+		<key>Poisoning</key>
+		<string>po[sh]</string>	
+		<key>Prevention and Control</key>
+		<string>pc[sh]</string>	
+		<key>Psychology</key>
+		<string>px[sh]</string>	
+		<key>Radiation Effects</key>
+		<string>re[sh]</string>	
+		<key>Radiography</key>
+		<string>ra[sh]</string>	
+		<key>Radionuclide Imaging</key>
+		<string>ri[sh]</string>	
+		<key>Radiotherapy</key>
+		<string>rt[sh]</string>	
+		<key>Rehabilitation</key>
+		<string>rh[sh]</string>	
+		<key>Secondary</key>
+		<string>sc[sh]</string>	
+		<key>Secretion</key>
+		<string>se[sh]</string>	
+		<key>Standards</key>
+		<string>st[sh]</string>	
+		<key>Statistics and Numerical Data</key>
+		<string>sn[sh]</string>	
+		<key>Supply and Distribution</key>
+		<string>sd[sh]</string>	
+		<key>Surgery</key>
+		<string>su[sh]</string>	
+		<key>Therapeutic Use</key>
+		<string>tu[sh]</string>	
+		<key>Therapy</key>
+		<string>th[sh]</string>	
+		<key>Toxicity</key>
+		<string>to[sh]</string>	
+		<key>Transmission</key>
+		<string>tm[sh]</string>	
+		<key>Transplantation</key>
+		<string>tr[sh]</string>	
+		<key>Trends</key>
+		<string>td[sh]</string>	
+		<key>Ultrasonography</key>
+		<string>us[sh]</string>	
+		<key>Ultrastructure</key>
+		<string>ul[sh]</string>	
+		<key>Urine</key>
+		<string>ur[sh]</string>	
+		<key>Utilization</key>
+		<string>ut[sh]</string>	
+		<key>Veterinary</key>
+		<string>ve[sh]</string>	
+		<key>Virology</key>
+		<string>vi[sh]</string>	
+	</dict>
+	<key>Publication Type</key>
+	<dict>
+		<key>Ahead of Print</key>
+		<string>pubstatusaheadofprint</string>
+		<key>Clinical Trial</key>
+		<string>clinical trial[pt]</string>
+		<key>Editorial</key>
+		<string>editorial[pt]</string>
+		<key>Journal Article</key>
+		<string>journal article[pt]</string>
+		<key>Letter</key>
+		<string>letter[pt]</string>
+		<key>Meta-Analysis</key>
+		<string>meta-analysis[pt]</string>
+		<key>Practice Guideline</key>
+		<string>practise guideline[pt]</string>
+		<key>Randomized Controlled Trial</key>
+		<string>randomized controlled trial[pt]</string>
+		<key>Review</key>
+		<string>review[pt]</string>
+	</dict>
+	<key>Species</key>
+	<dict>
+		<key>Animal</key>
+		<string>animal[sb]</string>
+		<key>Human</key>
+		<string>humans[sb]</string>
+	</dict>
+	<key>Topics</key>
+	<dict>
+		<key>AIDS/HIV </key>
+		<string>aids[sb]</string>
+		<key>Bioethics </key>
+		<string>bioethics[sb]</string>
+		<key>Cancer </key>
+		<string>cancer[sb]</string>
+		<key>Complementary and Alternative Medicine </key>
+		<string>cam[sb]</string>
+		<key>History of Medicine </key>
+		<string>history[sb]</string>
+		<key>Space Life Sciences </key>
+		<string>space[sb]</string>
+		<key>Systematic Reviews </key>
+		<string>systematic[sb]</string>
+		<key>Toxicology</key>
+		<string>tox[sb]</string>
+	</dict>
+</dict>
+</plist>

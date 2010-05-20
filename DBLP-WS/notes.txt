@@ -1,0 +1,3 @@
+WSMakeStubs -url http://dblp.l3s.de/WS/dblp++.php?wsdl -x ObjC -name DBLP
+
+http://en.wikibooks.org/wiki/Programming:WebObjects/Web_Services/Web_Service_Provider

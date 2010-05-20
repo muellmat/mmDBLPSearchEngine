@@ -13,21 +13,27 @@
 //
 //  Overview
 //
-//  This header file acts as a template to start building your new search engine plugin.
-//  More documentation can be found in the protocol file.
+//  The dblp Search Engine plugin allows users of Papers to query dblp.
+//  It leverages the full potential of the SDK thanks to the rich eUtils that
+//  the NLM provides. 
+//
+//  The plugin provides all three major services: Searching, Matching and 
+//  auto-matching, implementing all three respective protocols.
+//  In addition a series of plugin-specific helper methods have been 
+//  implemented through a "dblp_methods" category.
 
 #import <Cocoa/Cocoa.h>
 
 #import "PapersSearchPluginProtocol.h"
+#import "DBLP.h"
 
-@interface mmDBLPSearchEngine : NSObject <PapersSearchPluginProtocol, PapersMatchPluginProtocol, PapersAutoMatchPluginProtocol>
-{
+@interface mmDBLPSearchEngine : NSObject <PapersSearchPluginProtocol, PapersMatchPluginProtocol, PapersAutoMatchPluginProtocol> {
 	IBOutlet NSWindow *preferenceWindow;
 	
 	id delegate;
 	
-	NSDictionary * predefinedSearchTerms;
-	NSDictionary * searchFields; 
+	NSDictionary *predefinedSearchTerms;
+	NSDictionary *searchFields; 
 	
 	NSNumber *itemsPerPage;
 	NSNumber *itemOffset;
@@ -43,21 +49,21 @@
 - (id)delegate;
 - (void)setDelegate:(id)newDelegate;
 
-- (NSNumber *)itemsFound;
-- (void)setItemsFound:(NSNumber *)newItemsFound;
+- (NSNumber*)itemsFound;
+- (void)setItemsFound:(NSNumber*)newItemsFound;
 
-- (NSNumber *)itemsToRetrieve;
-- (void)setItemsToRetrieve:(NSNumber *)newItemsToRetrieve;
+- (NSNumber*)itemsToRetrieve;
+- (void)setItemsToRetrieve:(NSNumber*)newItemsToRetrieve;
 
-- (NSNumber *)retrievedItems;
-- (void)setRetrievedItems:(NSNumber *)newRetrievedItems;
-- (void)incrementRetrievedItemsWith: (int)value;
+- (NSNumber*)retrievedItems;
+- (void)setRetrievedItems:(NSNumber*)newRetrievedItems;
+- (void)incrementRetrievedItemsWith:(int)value;
 
-- (NSString *)statusString;
-- (void)setStatusString:(NSString *)newStatusString;
+- (NSString*)statusString;
+- (void)setStatusString:(NSString*)newStatusString;
 
-- (NSError *)searchError;
-- (void)setSearchError:(NSError *)newSearchError;
+- (NSError*)searchError;
+- (void)setSearchError:(NSError*)newSearchError;
 
 
 @end
