@@ -61,7 +61,8 @@
 
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"]; 
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef

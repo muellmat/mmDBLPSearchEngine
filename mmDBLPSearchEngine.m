@@ -25,7 +25,7 @@
 @end
 
 @interface mmDBLPSearchEngine (dblp_methods)
--(NSArray*)parseArticleData:(NSDictionary*)data withAuthors:(NSDictionary*)authorData;
+-(NSArray*)parseArticleData:(NSDictionary*)data withAuthors:(NSDictionary*)authorData andAbstract:(NSDictionary*)abstractData;
 @end
 
 
@@ -521,8 +521,16 @@
 			authors = [ws resultValue];
 		} 
 		
+		// fetch abstract (and bibtex)
+		NSDictionary *abstract = nil;
+		if ([current objectForKey:@"dblp_key"]) {
+			publication_data2* ws = [[publication_data2 alloc] init];
+			[ws setParameters:[current objectForKey:@"dblp_key"]];
+			abstract = [ws resultValue];
+		} 
+		
 		// Parse the data
-		NSArray *papers = [self parseArticleData:current withAuthors:authors];
+		NSArray *papers = [self parseArticleData:current withAuthors:authors andAbstract:abstract];
 		
 		// Check whether we got anything at all
 		if ([papers count] == 0) {
@@ -780,7 +788,7 @@ cleanup:
 
 @implementation mmDBLPSearchEngine (dblp_methods)
 
--(NSArray*)parseArticleData:(NSDictionary*)data withAuthors:(NSDictionary*)authorData {
+-(NSArray*)parseArticleData:(NSDictionary*)data withAuthors:(NSDictionary*)authorData andAbstract:(NSDictionary*)abstractData {
 	NSEnumerator *enumerator = nil;
 	NSDictionary *item = nil;
 	
@@ -847,6 +855,28 @@ cleanup:
 	}
 	
 	
+	// abstract
+	
+	if ([abstractData valueForKey:@"abstract"] != nil && [[abstractData valueForKey:@"abstract"] objectAtIndex:0]) {
+		//NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
+		[paper setValue:[[abstractData valueForKey:@"abstract"] objectAtIndex:0] forKey:@"abstract"];
+	}
+	
+	/*
+	if ([abstractData valueForKey:@"abstract"] && ![@"<null>\n" isEqualToString:[abstractData valueForKey:@"abstract"]]) {
+		//NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
+		[paper setValue:[NSString stringWithFormat:@"%@",[[abstractData valueForKey:@"abstract"] objectAtIndex:0]] forKey:@"abstract"];
+	}
+	*/
+	/*
+	// bibtex
+	// just save it, maybe I need it later for export...
+	if ([abstractData objectForKey:@"bibtex"] && ![@"" isEqualToString:[abstractData objectForKey:@"bibtex"]]) {
+		NSLog(@"%@", [abstractData objectForKey:@"bibtex"]);
+		[paper setValue:[abstractData objectForKey:@"bibtex"] forKey:@"bibtex"];
+	}
+	*/
+	
 	
 	// authors array
 	
@@ -882,6 +912,7 @@ cleanup:
 				[author setValue:[item objectForKey:@"author"] forKey:@"lastName"];
 			}
 		}
+		
 		
 		
 		
