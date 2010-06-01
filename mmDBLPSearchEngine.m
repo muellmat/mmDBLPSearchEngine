@@ -858,16 +858,10 @@ cleanup:
 	// abstract
 	
 	if ([abstractData valueForKey:@"abstract"] != nil && [[abstractData valueForKey:@"abstract"] objectAtIndex:0]) {
-		//NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
+		NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
 		[paper setValue:[[abstractData valueForKey:@"abstract"] objectAtIndex:0] forKey:@"abstract"];
 	}
 	
-	/*
-	if ([abstractData valueForKey:@"abstract"] && ![@"<null>\n" isEqualToString:[abstractData valueForKey:@"abstract"]]) {
-		//NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
-		[paper setValue:[NSString stringWithFormat:@"%@",[[abstractData valueForKey:@"abstract"] objectAtIndex:0]] forKey:@"abstract"];
-	}
-	*/
 	/*
 	// bibtex
 	// just save it, maybe I need it later for export...
