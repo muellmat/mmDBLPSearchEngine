@@ -1,33 +1,27 @@
 /* mmDBLPSearchEngine */
 //
-//  Created by muellmat on 15-05-2010.
-//  Copyright (c) 2010 Mekentosj.com. All rights reserved.
+//  Created by Matthias MŸller <muellmat@informatik.uni-tuebingen.de> 
+//  on 15-05-2010. This source is based on the SDK created by Mekentosj on 
+//  17-01-2007. Copyright (c) 2007 Mekentosj.com. All rights reserved.
 //
-//  Based on the SDK created by Mekentosj on 17-01-2007.
-//  Copyright (c) 2007 Mekentosj.com. All rights reserved.
-// 
-//  For use outside of the Papers application structure, please contact
-//  Mekentosj at feedback@mekentosj.com
-//  DO NOT REDISTRIBUTE WITHOUT ALL THE INCLUDED FILES
 //
 //
 //  Overview
 //
-//  The dblp Search Engine plugin allows users of Papers to query dblp.
-//  It leverages the full potential of the SDK thanks to the rich eUtils that
-//  the NLM provides. 
+//  The DBLP Search Engine plugin allows users of Papers to query DBLP.
 //
-//  The plugin provides all three major services: Searching, Matching and 
-//  auto-matching, implementing all three respective protocols.
-//  In addition a series of plugin-specific helper methods have been 
-//  implemented through a "dblp_methods" category.
+//  The plugin provides two major services: Searching and Matching, 
+//  implementing all two respective protocols. In addition a series of 
+//  plugin-specific helper methods have been implemented through a 
+//  "dblp_methods" category.
 
 #import <Cocoa/Cocoa.h>
-
 #import "PapersSearchPluginProtocol.h"
 #import "DBLP.h"
 
-@interface mmDBLPSearchEngine : NSObject <PapersSearchPluginProtocol, PapersMatchPluginProtocol, PapersAutoMatchPluginProtocol> {
+@interface mmDBLPSearchEngine : NSObject   <PapersSearchPluginProtocol, 
+											PapersMatchPluginProtocol, 
+											PapersAutoMatchPluginProtocol> {
 	IBOutlet NSWindow *preferenceWindow;
 	
 	id delegate;

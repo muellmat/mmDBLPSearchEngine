@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
 	<key>fields</key>
@@ -14,28 +14,18 @@
 		<string>[TW]</string>
 		<key>Author</key>
 		<string>[AU]</string>
-		<key>First Author</key>
-		<string>[1AU]</string>
-		<key>Last Author</key>
-		<string>[LASTAU]</string>
-		<key>Affiliation</key>
-		<string>[AD]</string>
 		<key>Journal</key>
 		<string>[TA]</string>
 		<key>Volume</key>
-		<string>[VI]</string>		
+		<string>[VI]</string>
 		<key>Issue</key>
 		<string>[IP]</string>
 		<key>Pages</key>
 		<string>[PG]</string>
 		<key>Date</key>
 		<string>[DP]</string>
-		<key>MeSH Topic</key>
-		<string>[MAJR]</string>		
-		<key>MeSH Term</key>
-		<string>[MH]</string>
-		<key>PMID</key>
-		<string>[PMID]</string>
+		<key>DBLP Key</key>
+		<string>[DK]</string>
 		<key>DOI</key>
 		<string>[DOI]</string>
 	</dict>
@@ -48,9 +38,6 @@
 		<string>Text Words</string>
 		<string>SPACER</string>
 		<string>Author</string>
-		<string>First Author</string>
-		<string>Last Author</string>
-		<string>Affiliation</string>
 		<string>SPACER</string>
 		<string>Journal</string>
 		<string>Volume</string>
@@ -58,13 +45,8 @@
 		<string>Pages</string>
 		<string>Date</string>
 		<string>SPACER</string>
-		<string>MeSH Topic</string>
-		<string>MeSH Term</string>
-		<string>SPACER</string>
-		<string>PMID</string>
+		<string>DBLP Key</string>
 		<string>DOI</string>
 	</array>
 </dict>
 </plist>
-
-
