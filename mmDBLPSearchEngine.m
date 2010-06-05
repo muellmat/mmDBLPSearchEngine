@@ -38,6 +38,7 @@
 
 @implementation mmDBLPSearchEngine (dblp_methods)
 
+// remove this method
 -(NSArray*)parseArticleData:(NSDictionary*)data 
 				withAuthors:(NSDictionary*)authorData 
 				andAbstract:(NSDictionary*)abstractData {
@@ -90,7 +91,7 @@
 		[paper setValue:[data objectForKey:@"ee"] forKey:@"url"];
 		
 		// if PDF is available
-		NSString *regex = @"^.*pls$";
+		NSString *regex = @"^.*pdf$";
 		NSPredicate *regextest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
 		if ([regextest evaluateWithObject:[data objectForKey:@"ee"]] == YES) {
 			[paper setValue:[data objectForKey:@"ee"] forKey:@"path"];
@@ -111,7 +112,7 @@
 	
 	if ([abstractData valueForKey:@"abstract"] != nil && [[abstractData valueForKey:@"abstract"] objectAtIndex:0]) {
 		//NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
-		[paper setValue:[[abstractData valueForKey:@"abstract"] objectAtIndex:0] forKey:@"abstract"];
+		//[paper setValue:[[abstractData valueForKey:@"abstract"] objectAtIndex:0] forKey:@"abstract"];
 	}
 	
 	/*
@@ -675,6 +676,8 @@
 	// Now we are
 	isSearching = YES;
 	
+	NSInteger results = 0;
+	
 	// Generate the query from the tokens
 	/*
 	NSString *currentQuery = [self queryStringFromTokens:tokens prefix:nil];
@@ -687,117 +690,414 @@
 	}
 	*/
 	
-	NSMutableString *currentQuery = [[NSMutableString alloc] init];
-	NSEnumerator *e = [tokens objectEnumerator];
-	id token;
-	while (token = [e nextObject]) {
-		[currentQuery appendString:[token valueForKey:@"token"]];
-		[currentQuery appendString:@" "];
-		NSLog(@"\n\ntoken:\t%@\ncode:\t%@\nopCode:\t%@\n\n\n\n", [token valueForKey:@"token"], [token valueForKey:@"code"], [token valueForKey:@"operatorCode"]);
-	}
-	if (!currentQuery) {
-		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-		[userInfo setObject:NSLocalizedStringFromTableInBundle(@"Could not create query from searchfield input", nil, [NSBundle bundleForClass:[self class]], @"Error message when query can't be created") forKey:NSLocalizedDescriptionKey];
-		[userInfo setObject:NSLocalizedStringFromTableInBundle(@"Please ensure you have created a proper query.", nil, [NSBundle bundleForClass:[self class]], @"Recovery suggestion when query can't be created") forKey:NSLocalizedRecoverySuggestionErrorKey];		
-		[self setSearchError:[NSError errorWithDomain:@"DBLPSearchController" code:1 userInfo:userInfo]];
-		goto cleanup;
-	}
+	
+	// Create a SQLite DB in /tmp where we can store our query results
+	
+	// First delete the old db, if it exists
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    [fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
+    
+	// Now create a new db
+    FMDatabase* db = [FMDatabase databaseWithPath:@"/tmp/PapersPluginDBLPTempQueryResult.db"];
+    if (![db open])
+        NSLog(@"Could not open db.");
+	
+	// Set up tables
+    [db beginTransaction];
+	[db executeUpdate:@"create table papers    (key text, conference text, doi text, ee text, isbn text, month integer, number integer, pages text, publisher text, series text, source text, title text, type text, volume integer, year integer)"];
+	[db executeUpdate:@"create table authors   (key text, fullname text, firstnames text, lastname text, initials text)"];
+	[db executeUpdate:@"create table abstracts (key text, abstract text, bibtex text)"];
+	[db commit];
+	
+	
 	
 	// Inform delegate we're about to start
 	id <PapersSearchPluginDelegate> del = [self delegate];
 	[del didBeginSearch:self];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		@"Connecting with DBLP...", 
+		nil,
+		[NSBundle bundleForClass:[self class]], 
+		@"Status message shown when plugin is connecting to the service")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+															 @"Connected to DBLP...", 
+															 nil, 
+															 [NSBundle bundleForClass:[self class]], 
+															 @"Status message shown when the plugin has succesfully connected to the service")];
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Connecting with DBLP...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when plugin is connecting to the service")];
-	
-	////////////////////////////////////////
-	// GETTING INITIAL INFO (COUNT + PMIDS)
-	////////////////////////////////////////
-	
-	all_publications_keywords_year* ws = [[all_publications_keywords_year alloc] init];
-	[ws setParameters:currentQuery 
-		 in_startYear:[NSNumber numberWithInteger:0] 
-		   in_endYear:[NSNumber numberWithInteger:0] 
-			 in_limit:[NSNumber numberWithInteger:1000]];
-	NSDictionary *result = [ws resultValue];
-	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Connected to DBLP...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when the plugin has succesfully connected to the service")];
-	
-	// Store the number of total articles matching the query
-	if ([result count] > 0) {
-		[self setItemsFound:[NSNumber numberWithInteger:[result count]]];
-		[del didFindResults:self];
-	}
-	
-	// Check whether we got anything at all
-	if ([result count] == 0) {
-		[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {	
 		goto cleanup;	
 	}
 	
-	////////////////////////////////////////
-	// FETCHING ACTUAL RESULTS (METADATA)
-	////////////////////////////////////////
-	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Fetching Papers...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the found papers")];
-	
-	NSEnumerator *enumerator = [result objectEnumerator];
-	id current = nil;
-	[self setRetrievedItems:[NSNumber numberWithInt:0]];
-	[self setItemsToRetrieve:[NSNumber numberWithInteger:[result count]]];	
-	while ([[self itemsToRetrieve] integerValue] > 0) {
-		current = [enumerator nextObject];
-		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+	// Send a request for each token, save the result in the db
+	NSEnumerator *e1 = [tokens objectEnumerator];
+	id token;
+	while (token = [e1 nextObject]) {
+		[self setStatusString:NSLocalizedStringFromTableInBundle(
+																 @"Calculating objects to retrieve...", 
+																 nil, 
+																 [NSBundle bundleForClass:[self class]], 
+																 @"")];
 		
 		// check whether we have been cancelled
-		if(!shouldContinueSearch){	
+		if (!shouldContinueSearch) {	
 			goto cleanup;	
 		}
 		
-		// fetch authors
-		NSDictionary *authors = nil;
-		if ([current objectForKey:@"dblp_key"]) {
-			publication_authors* ws = [[publication_authors alloc] init];
-			[ws setParameters:[current objectForKey:@"dblp_key"]];
-			authors = [ws resultValue];
-		} 
+		// Send the request for the current token
+		all_publications_keywords_year* ws = [[all_publications_keywords_year alloc] init];
+		[ws setParameters:[token valueForKey:@"token"] 
+			 in_startYear:[NSNumber numberWithInteger:0] 
+			   in_endYear:[NSNumber numberWithInteger:0] 
+				 in_limit:[NSNumber numberWithInteger:100]]; // hard-coded limit to 100! use prefkey instead!!!
+		NSDictionary *result = [ws resultValue];
+		results += [result count];
 		
-		// fetch abstract (and bibtex)
-		NSDictionary *abstract = nil;
-		if ([current objectForKey:@"dblp_key"]) {
-			publication_data2* ws = [[publication_data2 alloc] init];
-			[ws setParameters:[current objectForKey:@"dblp_key"]];
-			abstract = [ws resultValue];
-		} 
-		
-		// Parse the data
-		NSArray *papers = [self parseArticleData:current withAuthors:authors andAbstract:abstract];
-		
-		// Check whether we got anything at all
-		if ([papers count] == 0) {
-			[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+		// check whether we have been cancelled
+		if (!shouldContinueSearch) {	
 			goto cleanup;	
 		}
 		
-		// Hand them to the delegate
-		[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
-		
-		// Update count
-		[self incrementRetrievedItemsWith:[[self retrievedItems] intValue]+1];		
-		[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
+		// save the result in the db
+		[db beginTransaction];
+		NSEnumerator *e2 = [result objectEnumerator];
+		NSDictionary *item;
+		while ((item = [e2 nextObject])) {
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			[db executeUpdate:@"insert into papers (key, conference, doi, ee, isbn, month, number, pages, publisher, series, source, title, type, volume, year) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+			 [item objectForKey:@"dblp_key"],
+			 [item objectForKey:@"conference"],
+			 [item objectForKey:@"doi"],
+			 [item objectForKey:@"ee"],
+			 [item objectForKey:@"isbn"],
+			 [item objectForKey:@"month"],
+			 [item objectForKey:@"number"],
+			 [item objectForKey:@"pages"],
+			 [item objectForKey:@"publisher"],
+			 [item objectForKey:@"series"],
+			 [item objectForKey:@"source"],
+			 [item objectForKey:@"title"],
+			 [item objectForKey:@"type"],
+			 [item objectForKey:@"volume"],
+			 [item objectForKey:@"year"]
+			 ];
+		}
+		[db commit];
+		[ws release];
+	}
+	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {	
+		goto cleanup;	
+	}
+	
+	// Store the number of total articles matching the query
+	if (results > 0) {
+		results = [db intForQuery:@"select count(key) as n from (select distinct(key), key from papers);"];
+		[self setItemsFound:[NSNumber numberWithInteger:results]];
+		[del didFindResults:self];
+	}
+	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {	
+		goto cleanup;	
+	}
+	
+	// Check whether we got anything at all
+	if (results == 0) {
+		[self setStatusString:NSLocalizedStringFromTableInBundle(
+			@"No Papers found.", 
+			nil, 
+			[NSBundle bundleForClass:[self class]], 
+			@"Status message shown when no results were found for the query")];
+		goto cleanup;	
+	}
+	
+	
+	
+	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Fetching Papers...", 
+															 nil, 
+															 [NSBundle bundleForClass:[self class]], 
+															 @"Status message shown while fetching the metadata for the found papers")];
+	
+	[self setRetrievedItems:[NSNumber numberWithInt:0]];
+	[self setItemsToRetrieve:[NSNumber numberWithInteger:results]];	
+	
+	// update status
+	[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
+						   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {	
+		goto cleanup;	
+	}
+	
+	
+	
+	// Fetch authors and abstract/bibtex for each key
+	FMResultSet *rs = [db executeQuery:@"select distinct(key), * from papers order by year desc;", nil];
+	while ([rs next]) {
+		// Fetch authors, abstract and bibtex
+		if ([rs stringForColumn:@"key"]) {
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			// Fetch authors
+			NSDictionary *authors = nil;
+			publication_authors* ws1 = [[publication_authors alloc] init];
+			[ws1 setParameters:[rs stringForColumn:@"key"]];
+			authors = [ws1 resultValue];
+			
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			// save the result in the db
+			[db beginTransaction];
+			NSEnumerator *e3 = [authors objectEnumerator];
+			NSDictionary *author;
+			while ((author = [e3 nextObject])) {
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
+				
+				NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
+				NSArray *parts = [[author objectForKey:@"author"] componentsSeparatedByCharactersInSet:whitespace];
+				NSString *lastName = [author objectForKey:@"author"];
+				NSMutableString *firstNames = [[NSMutableString alloc] initWithString:@""];
+				NSMutableString *initials = [[NSMutableString alloc] initWithString:@""];
+				int n = [parts count];
+				if (n >= 2) {
+					int last = n - 1;
+					firstNames = [NSMutableString stringWithString:@""];
+					initials = [NSMutableString stringWithString:@""];
+					int i = 0;
+					for (i=0; i<last; i++) {
+						[firstNames appendString:[parts objectAtIndex:i]];
+						[initials appendString:[[parts objectAtIndex:i] substringToIndex:1]];
+					}
+					lastName = [parts objectAtIndex:last];
+				}
+				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
+				
+				[db executeUpdate:@"insert into authors (key, fullname, firstnames, lastname, initials) values (?, ?, ?, ?, ?)",
+				 [author objectForKey:@"dblp_key"],
+				 [author objectForKey:@"author"],
+				 [NSString stringWithFormat:@"%@", firstNames],
+				 lastName,
+				 [NSString stringWithFormat:@"%@", initials]
+				 ];
+			}
+			[db commit];
+			[ws1 release];
+			
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			// Fetch abstract/bibtex
+			NSDictionary *abstract = nil;
+			publication_data2* ws2 = [[publication_data2 alloc] init];
+			[ws2 setParameters:[rs stringForColumn:@"key"]];
+			abstract = [ws2 resultValue];
+			
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			// save the result in the db
+			[db beginTransaction];
+			NSEnumerator *e4 = [abstract objectEnumerator];
+			NSDictionary *item;
+			while ((item = [e4 nextObject])) {
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
+				
+				[db executeUpdate:@"insert into abstracts (key, abstract, bibtex) values (?, ?, ?)",
+				 [item objectForKey:@"dblp_key"],
+				 [item objectForKey:@"abstract"],
+				 [item objectForKey:@"bibtex"]
+				 ];
+			}
+			[db commit];
+			[ws2 release];
+			
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			// We got all meta data, let's display the papers now
+			NSMutableArray *papers = [NSMutableArray arrayWithCapacity:100];
+			FMResultSet *rs2 = [db executeQuery:@"select distinct(key), * from papers where key = ? order by year desc, title asc;", [rs stringForColumn:@"key"], nil];
+			while ([rs2 next]) {
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
+				
+				NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
+				
+				// authors
+				NSMutableArray *authors = [NSMutableArray arrayWithCapacity:100];
+				FMResultSet *rs3 = [db executeQuery:@"select * from authors where key = ? order by lastname, firstnames;", [rs stringForColumn:@"key"], nil];
+				while ([rs3 next]) {
+					NSMutableDictionary *author = [NSMutableDictionary dictionaryWithCapacity:50];
+					[author setValue:[rs3 stringForColumn:@"firstnames"] forKey:@"firstName"];
+					[author setValue:[rs3 stringForColumn:@"initials"] forKey:@"initials"];
+					[author setValue:[rs3 stringForColumn:@"lastname"] forKey:@"lastName"];
+					if (author)
+						[authors addObject:author];
+				}
+				[rs3 close];
+				if ([authors count] > 0)
+					[paper setValue:authors forKey:@"authors"];
+				
+				
+				
+				// journals
+				NSMutableArray *journals = [NSMutableArray arrayWithCapacity:1];
+				NSMutableDictionary *journal = [NSMutableDictionary dictionaryWithCapacity:3];
+				[journal setValue:[rs stringForColumn:@"source"] forKey:@"name"];
+				[journal setValue:[rs stringForColumn:@"publisher"] forKey:@"publisher"];
+				[journal setValue:[rs stringForColumn:@"number"] forKey:@"currentissue"];
+				if (journal)
+					[journals addObject:journal];
+				if ([journals count] > 0)
+					[paper setValue:journals forKey:@"journal"];
+				
+				
+				
+				// abstract and bibtex
+				[paper setValue:[db stringForQuery:@"select abstract from abstracts where key = ?", [rs stringForColumn:@"key"], nil] forKey:@"abstract"];
+				[paper setValue:[db stringForQuery:@"select bibtex from abstracts where key = ?", [rs stringForColumn:@"key"], nil] forKey:@"bibtex"];
+				
+				
+				
+				// publicationTypes
+				NSMutableArray *publicationTypes = [NSMutableArray arrayWithCapacity:1];
+				NSMutableDictionary *publicationType = [NSMutableDictionary dictionaryWithCapacity:1];
+				[publicationType setValue:[rs stringForColumn:@"type"] forKey:@"name"];
+				if (publicationType)
+					[publicationTypes addObject:publicationType];
+				if ([publicationTypes count] > 0)
+					[paper setValue:publicationTypes forKey:@"publicationTypes"];
+				
+				
+				
+				// doi
+				[paper setValue:[rs stringForColumn:@"doi"] forKey:@"doi"];
+				
+				// pages
+				[paper setValue:[rs stringForColumn:@"pages"] forKey:@"pages"];
+				
+				// url / path (to pdf, if available)
+				if ([rs stringForColumn:@"ee"] && ![@"" isEqualToString:[rs stringForColumn:@"ee"]]) {
+					[paper setValue:[rs stringForColumn:@"ee"] forKey:@"url"];
+					
+					// if PDF is available
+					NSString *regex = @"^.*pdf$";
+					NSPredicate *regextest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+					if ([regextest evaluateWithObject:[rs stringForColumn:@"ee"]] == YES) {
+						[paper setValue:[rs stringForColumn:@"ee"] forKey:@"path"];
+					}
+				}
+				
+				// identifier (= dblp_key)
+				[paper setValue:[rs stringForColumn:@"key"] forKey:@"identifier"];
+				
+				// title
+				[paper setValue:[rs stringForColumn:@"title"] forKey:@"title"];
+				
+				// volume
+				[paper setValue:[rs stringForColumn:@"volume"] forKey:@"volume"];
+				
+				// year (must be NSNumber!)
+				[paper setValue:[[NSNumber alloc] initWithInteger:[[rs stringForColumn:@"year"] integerValue]] forKey:@"year"];
+				
+				
+				
+				// --- additional meta data ---
+				
+				// isbn
+				[paper setValue:[rs stringForColumn:@"isbn"] forKey:@"isbn"];
+				
+				// month
+				[paper setValue:[rs stringForColumn:@"month"] forKey:@"month"];
+				
+				//[paper setValue:[rs stringForColumn:@"conference"] forKey:@"conference"];
+				//[paper setValue:[rs stringForColumn:@"series"] forKey:@"series"];
+				//[paper setValue:[rs stringForColumn:@"type"] forKey:@"type"];
+				
+				
+				
+				if (paper) {
+					// Update count
+					[self incrementRetrievedItemsWith:[[self retrievedItems] intValue]+1];		
+					[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
+					
+					// update status
+					[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
+										   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+					
+					[papers addObject:paper];
+				}
+			}
+			[rs2 close];
+			
+			// check whether we have been cancelled
+			if (!shouldContinueSearch) {	
+				goto cleanup;	
+			}
+			
+			// Check whether we got anything at all
+			if ([papers count] == 0) {
+				[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+				goto cleanup;	
+			}
+			
+			// Hand them to the delegate
+			[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
+		}
+	}
+	[rs close]; 
+	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {	
+		goto cleanup;	
 	}
 	
 cleanup:
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Done.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown after all metadata has been retrieved")];
+	// close the db
+	[db close];
+	
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		@"Done.", 
+		nil, 
+		[NSBundle bundleForClass:[self class]], 
+		@"Status message shown after all metadata has been retrieved")];
 	
 	// done, let the delegate know
 	del = [self delegate];
 	[del didEndSearch:self];
-	
-	[ws release];
-	[currentQuery release];
 	
 	isSearching = NO;
 	

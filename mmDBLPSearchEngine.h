@@ -18,6 +18,8 @@
 #import <Cocoa/Cocoa.h>
 #import "PapersSearchPluginProtocol.h"
 #import "DBLP.h"
+#import "FMDatabase.h"
+#import "FMDatabaseAdditions.h"
 
 @interface mmDBLPSearchEngine : NSObject   <PapersSearchPluginProtocol, 
 											PapersMatchPluginProtocol, 
