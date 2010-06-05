@@ -10,8 +10,6 @@
 		<string>[TI]</string>
 		<key>Title+Abstract</key>
 		<string>[TIAB]</string>
-		<key>Text Words</key>
-		<string>[TW]</string>
 		<key>Author</key>
 		<string>[AU]</string>
 		<key>Journal</key>
@@ -35,7 +33,6 @@
 		<string>SPACER</string>
 		<string>Title</string>
 		<string>Title+Abstract</string>
-		<string>Text Words</string>
 		<string>SPACER</string>
 		<string>Author</string>
 		<string>SPACER</string>

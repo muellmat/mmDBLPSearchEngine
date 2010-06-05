@@ -27,9 +27,9 @@
 
 
 @interface mmDBLPSearchEngine (dblp_methods)
-	-(NSArray*)parseArticleData:(NSDictionary*)data 
-					withAuthors:(NSDictionary*)authorData 
-					andAbstract:(NSDictionary*)abstractData;
+	-(NSString*)queryPreFilter:(NSArray*)tokens;
+	-(NSString*)queryPostFilter:(NSArray*)tokens;
+	-(NSString*)sqlFragmentByToken:(MTQueryTermToken*)token;
 @end
 
 #pragma mark 
@@ -38,210 +38,165 @@
 
 @implementation mmDBLPSearchEngine (dblp_methods)
 
-// remove this method
--(NSArray*)parseArticleData:(NSDictionary*)data 
-				withAuthors:(NSDictionary*)authorData 
-				andAbstract:(NSDictionary*)abstractData {
-	NSEnumerator *enumerator = nil;
-	NSDictionary *item = nil;
+-(NSString*)queryPreFilter:(NSArray*)tokens {
+	NSArray *codes = [NSArray arrayWithObjects:@"[TI]",@"[TA]",@"[VI]",@"[IP]",@"[PG]",@"[DP]",@"[DK]",@"[DOI]",nil];
+	int n = 0;
 	
-	NSMutableArray *papers = [NSMutableArray arrayWithCapacity:100];
-	NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
+	NSEnumerator *e;
+	NSEnumerator *ee;
 	
-	// built in keys
+	MTQueryTermToken *token;
+	NSString *code;
 	
-	if ([data objectForKey:@"title"] && ![@"" isEqualToString:[data objectForKey:@"title"]]) {
-		//NSLog(@"%@", [data objectForKey:@"title"]);
-		[paper setValue:[data objectForKey:@"title"] forKey:@"title"];
-	}
-	
-	if ([data objectForKey:@"year"] && ![@"" isEqualToString:[data objectForKey:@"year"]]) {
-		//NSLog(@"%@", [data objectForKey:@"year"]);
-		[paper setValue:[NSNumber numberWithInteger:[[data objectForKey:@"year"] integerValue]] forKey:@"year"];
-	}
-	
-	if ([data objectForKey:@"month"] && ![@"" isEqualToString:[data objectForKey:@"month"]]) {
-		//NSLog(@"%@", [data objectForKey:@"month"]);
-		//[paper setValue:[NSNumber numberWithInteger:[[data objectForKey:@"month"] integerValue]] forKey:@"month"];
-		[paper setValue:[data objectForKey:@"month"] forKey:@"month"];
-	}
-	
-	if ([data objectForKey:@"doi"] && ![@"" isEqualToString:[data objectForKey:@"doi"]]) {
-		//NSLog(@"%@", [data objectForKey:@"doi"]);
-		[paper setValue:[data objectForKey:@"doi"] forKey:@"doi"];
-	}
-	
-	if ([data objectForKey:@"pages"] && ![@"" isEqualToString:[data objectForKey:@"pages"]]) {
-		//NSLog(@"%@", [data objectForKey:@"pages"]);
-		[paper setValue:[data objectForKey:@"pages"] forKey:@"pages"];
-	}
-	
-	if ([data objectForKey:@"conference"] && ![@"" isEqualToString:[data objectForKey:@"conference"]]) {
-		//NSLog(@"%@", [data objectForKey:@"conference"]);
-		[paper setValue:[data objectForKey:@"conference"] forKey:@"conference"];
-	}
-	
-	/*if ([data objectForKey:@"volume"] != nil && ![@"" isEqualToString:[data objectForKey:@"volume"]]) {
-	 NSLog(@"volume: --%@--", [data objectForKey:@"volume"]);
-	 [paper setValue:[data objectForKey:@"volume"] forKey:@"volume"];
-	 }*/
-	
-	if ([data objectForKey:@"ee"] && ![@"" isEqualToString:[data objectForKey:@"ee"]]) {
-		//NSLog(@"%@", [data objectForKey:@"ee"]);
-		[paper setValue:[data objectForKey:@"ee"] forKey:@"url"];
-		
-		// if PDF is available
-		NSString *regex = @"^.*pdf$";
-		NSPredicate *regextest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-		if ([regextest evaluateWithObject:[data objectForKey:@"ee"]] == YES) {
-			[paper setValue:[data objectForKey:@"ee"] forKey:@"path"];
-		}
-	}
-	
-	
-	
-	// additional
-	
-	if ([data objectForKey:@"dblp_key"] && ![@"" isEqualToString:[data objectForKey:@"dblp_key"]]) {
-		//NSLog(@"%@", [data objectForKey:@"dblp_key"]);
-		[paper setValue:[data objectForKey:@"dblp_key"] forKey:@"dblp_key"];
-	}
-	
-	
-	// abstract
-	
-	if ([abstractData valueForKey:@"abstract"] != nil && [[abstractData valueForKey:@"abstract"] objectAtIndex:0]) {
-		//NSLog(@"%@", [abstractData valueForKey:@"abstract"]);
-		//[paper setValue:[[abstractData valueForKey:@"abstract"] objectAtIndex:0] forKey:@"abstract"];
-	}
-	
-	/*
-	 // bibtex
-	 // just save it, maybe I need it later for export...
-	 if ([abstractData objectForKey:@"bibtex"] && ![@"" isEqualToString:[abstractData objectForKey:@"bibtex"]]) {
-	 NSLog(@"%@", [abstractData objectForKey:@"bibtex"]);
-	 [paper setValue:[abstractData objectForKey:@"bibtex"] forKey:@"bibtex"];
-	 }
-	 */
-	
-	
-	// authors array
-	
-	NSMutableArray *authors = [NSMutableArray arrayWithCapacity:100];
-	enumerator = [authorData objectEnumerator];
-	while ((item = [enumerator nextObject])) {
-		NSMutableDictionary *author = [NSMutableDictionary dictionaryWithCapacity:50];
-		
-		if ([item objectForKey:@"author"] && ![@"" isEqualToString:[item objectForKey:@"author"]]) {
-			//NSLog(@"%@", [item objectForKey:@"author"]);
-			
-			NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
-			NSArray *parts = [[item objectForKey:@"author"] componentsSeparatedByCharactersInSet:whitespace];
-			
-			int n = [parts count];
-			if (n == 1) {
-				[author setValue:[item objectForKey:@"author"] forKey:@"lastName"];
-			} else if (n >= 2) {
-				int last = n - 1;
-				
-				NSMutableString *firstNames = [NSMutableString stringWithString:@""];
-				NSMutableString *initials = [NSMutableString stringWithString:@""];
-				int i = 0;
-				for (i=0; i<last; i++) {
-					[firstNames appendString:[parts objectAtIndex:i]];
-					[initials appendString:[[parts objectAtIndex:i] substringToIndex:1]];
-				}
-				[author setValue:firstNames forKey:@"firstName"];
-				[author setValue:initials forKey:@"initials"];
-				
-				[author setValue:[parts objectAtIndex:last] forKey:@"lastName"];
-			} else {
-				[author setValue:[item objectForKey:@"author"] forKey:@"lastName"];
+	e = [tokens objectEnumerator];
+	while (token = [e nextObject]) {
+		ee = [codes objectEnumerator];
+		while (code = [ee nextObject]) {
+			if ([code isEqualToString:[token valueForKey:@"code"]]) {
+				n++;
 			}
 		}
-		
-		
-		
-		
-		/*AUTHORS
-		 - correspondence
-		 - email
-		 - firstName
-		 - homepage
-		 - initials
-		 - lastName - required
-		 - mugshot (NSImage)
-		 - nickName
-		 - notes*/
-		
-		// test
-		if (author)
-			[authors addObject:author];
-		
 	}
-	if ([authors count] > 0)
-		[paper setValue:authors forKey:@"authors"];
 	
-	
-	
-	// journals array
-	
-	NSMutableArray *journals = [NSMutableArray arrayWithCapacity:100];
-	enumerator = [authorData objectEnumerator];
-	while ((item = [enumerator nextObject])) {
-		NSMutableDictionary *journal = [NSMutableDictionary dictionaryWithCapacity:50];
-		
-		if ([item objectForKey:@"source"] && ![@"" isEqualToString:[item objectForKey:@"source"]]) {
-			//NSLog(@"%@", [item objectForKey:@"source"]);
-			[journal setValue:[item objectForKey:@"source"] forKey:@"name"];
+	if (n == 1) {
+		e = [tokens objectEnumerator];
+		while (token = [e nextObject]) {
+			ee = [codes objectEnumerator];
+			while (code = [ee nextObject]) {
+				if ([code isEqualToString:[token valueForKey:@"code"]]) {
+					return [NSString stringWithFormat:@"where %@", [self sqlFragmentByToken:token]];
+				}
+			}
 		}
-		
-		if ([item objectForKey:@"publisher"] && ![@"" isEqualToString:[item objectForKey:@"publisher"]]) {
-			//NSLog(@"%@", [item objectForKey:@"publisher"]);
-			[journal setValue:[item objectForKey:@"publisher"] forKey:@"publisher"];
+	} else if (n >= 2) {
+		NSMutableString *where = [[NSMutableString alloc] init];
+		[where appendString:@"where "];
+		BOOL first = YES;
+		e = [tokens objectEnumerator];
+		while (token = [e nextObject]) {
+			ee = [codes objectEnumerator];
+			while (code = [ee nextObject]) {
+				if ([code isEqualToString:[token valueForKey:@"code"]]) {
+					if (first) {
+						first = NO;
+					} else {
+						[where appendString:@"and "];
+					}
+					[where appendString:[self sqlFragmentByToken:token]];
+					[where appendString:@" "];
+				}
+			}
 		}
-		
-		if ([item objectForKey:@"number"] && ![@"" isEqualToString:[item objectForKey:@"number"]]) {
-			//NSLog(@"%@", [item objectForKey:@"number"]);
-			[journal setValue:[item objectForKey:@"number"] forKey:@"currentissue"];
-		}
-		
-		// test
-		if (journal)
-			[journals addObject:journal];
-		
+		return where;
 	}
-	if ([journals count] > 0)
-		[paper setValue:journals forKey:@"journals"];
+	
+	return @"";
+}
+
+-(NSString*)queryPostFilter:(NSArray*)tokens {
+	NSArray *codes = [NSArray arrayWithObjects:@"[TIAB]",@"[AU]",@"[TI]",@"[TA]",@"[VI]",@"[IP]",@"[PG]",@"[DP]",@"[DOI]",nil];
+	int n = 0;
+	
+	BOOL first = YES;
+	NSEnumerator *e;
+	NSEnumerator *ee;
+	
+	MTQueryTermToken *token;
+	NSString *code;
+	
+	NSMutableString *all = [[NSMutableString alloc] init];
+	[all appendString:@""];
+	first = YES;
+	e = [tokens objectEnumerator];
+	while (token = [e nextObject]) {
+		if ([@"ALL" isEqualToString:[token valueForKey:@"code"]]) {
+			if (first) {
+				first = NO;
+			} else {
+				[all appendString:@"and "];
+			}
+			[all appendString:[self sqlFragmentByToken:token]];
+			[all appendString:@" "];
+		}
+	}
 	
 	
-	// publicationTypes array
-	/*
-	 NSMutableArray *publicationTypes = [NSMutableArray arrayWithCapacity:100];
-	 enumerator = [authorData objectEnumerator];
-	 while ((item = [enumerator nextObject])) {
-	 NSMutableDictionary *publicationType = [NSMutableDictionary dictionaryWithCapacity:50];
-	 
-	 if ([item objectForKey:@"type"] && ![@"" isEqualToString:[item objectForKey:@"type"]]) {
-	 //NSLog(@"%@", [item objectForKey:@"type"]);
-	 [publicationType setValue:[item objectForKey:@"type"] forKey:@"name"];
-	 }
-	 
-	 // test
-	 if (publicationType)
-	 [publicationTypes addObject:publicationType];
-	 
-	 }
-	 if ([publicationTypes count] > 0)
-	 [paper setValue:publicationTypes forKey:@"publicationTypes"];
-	 */
+	e = [tokens objectEnumerator];
+	while (token = [e nextObject]) {
+		ee = [codes objectEnumerator];
+		while (code = [ee nextObject]) {
+			if ([code isEqualToString:[token valueForKey:@"code"]]) {
+				n++;
+			}
+		}
+	}
 	
+	if (n >= 1) {
+		NSMutableString *where = [[NSMutableString alloc] init];
+		[where appendString:@"where "];
+		if (![@"" isEqualToString:all]) {
+			[where appendString:all];
+			[where appendString:@"and "];
+		}
+		first = YES;
+		e = [tokens objectEnumerator];
+		while (token = [e nextObject]) {
+			ee = [codes objectEnumerator];
+			while (code = [ee nextObject]) {
+				if ([code isEqualToString:[token valueForKey:@"code"]]) {
+					if (first) {
+						first = NO;
+					} else {
+						[where appendString:@"and "];
+					}
+					[where appendString:[self sqlFragmentByToken:token]];
+					[where appendString:@" "];
+				}
+			}
+		}
+		return where;
+	} else if (n == 0 && ![@"" isEqualToString:all]) {
+		return [NSString stringWithFormat:@"where %@", all];
+	}
 	
-	// complete... let's return it
-	if (paper)
-		[papers addObject:paper];
+	return @"";
+}
+
+-(NSString*)sqlFragmentByToken:(MTQueryTermToken*)token {
+	if ([[token valueForKey:@"code"] isEqualToString:@"[ALL]"])
+		return [NSString stringWithFormat:@" (papers.key like '%%%@%%' or papers.conference like '%%%@%%' or papers.doi like '%%%@%%' or papers.ee like '%%%@%%' or papers.isbn like '%%%@%%' or papers.month like '%%%@%%' or papers.number like '%%%@%%' or papers.pages like '%%%@%%' or papers.publisher like '%%%@%%' or papers.series like '%%%@%%' or papers.source like '%%%@%%' or papers.title like '%%%@%%' or papers.type like '%%%@%%' or papers.volume like '%%%@%%' or papers.year like '%%%@%%' or abstracts.abstract like '%%%@%%' or authors.fullname like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"]];
 	
-	return papers;
+	if ([[token valueForKey:@"code"] isEqualToString:@"[TI]"])
+		return [NSString stringWithFormat:@" papers.title like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[TIAB]"])
+		return [NSString stringWithFormat:@" (papers.title like '%%%@%%' and abstracts.abstract like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[AU]"])
+		return [NSString stringWithFormat:@" authors.fullname like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[TA]"])
+		return [NSString stringWithFormat:@" (papers.source like '%%%@%%' or papers.publisher like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[VI]"])
+		return [NSString stringWithFormat:@" papers.volume like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[IP]"])
+		return [NSString stringWithFormat:@" papers.number like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[PG]"])
+		return [NSString stringWithFormat:@" papers.pages like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[DP]"])
+		return [NSString stringWithFormat:@" (papers.year like '%%%@%%' or papers.month like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[DK]"])
+		return [NSString stringWithFormat:@" papers.key like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	if ([[token valueForKey:@"code"] isEqualToString:@"[DOI]"])
+		return [NSString stringWithFormat:@" papers.doi like '%%%@%%'", [token valueForKey:@"token"]];
+	
+	return @"";
 }
 
 @end
@@ -690,7 +645,6 @@
 	}
 	*/
 	
-	
 	// Create a SQLite DB in /tmp where we can store our query results
 	
 	// First delete the old db, if it exists
@@ -750,7 +704,7 @@
 		[ws setParameters:[token valueForKey:@"token"] 
 			 in_startYear:[NSNumber numberWithInteger:0] 
 			   in_endYear:[NSNumber numberWithInteger:0] 
-				 in_limit:[NSNumber numberWithInteger:100]]; // hard-coded limit to 100! use prefkey instead!!!
+				 in_limit:[NSNumber numberWithInteger:1000]]; // hard-coded limit to 1000! use prefkey instead!!!
 		NSDictionary *result = [ws resultValue];
 		results += [result count];
 		
@@ -839,8 +793,16 @@
 	
 	
 	
+	
+	
+	
+	
+	
+	
 	// Fetch authors and abstract/bibtex for each key
-	FMResultSet *rs = [db executeQuery:@"select distinct(key), * from papers order by year desc;", nil];
+	NSString *query1 = [NSString stringWithFormat:@"select distinct(papers.key), * from papers %@ order by papers.year desc, papers.title asc;", [self queryPreFilter:tokens]];
+	NSLog(@"prefilter: %@", query1);
+	FMResultSet *rs = [db executeQuery:query1, nil];
 	while ([rs next]) {
 		// Fetch authors, abstract and bibtex
 		if ([rs stringForColumn:@"key"]) {
@@ -944,9 +906,15 @@
 				goto cleanup;	
 			}
 			
+			
+			
+			
+			
 			// We got all meta data, let's display the papers now
 			NSMutableArray *papers = [NSMutableArray arrayWithCapacity:100];
-			FMResultSet *rs2 = [db executeQuery:@"select distinct(key), * from papers where key = ? order by year desc, title asc;", [rs stringForColumn:@"key"], nil];
+			NSString *query2 = [NSString stringWithFormat:@"select distinct * from (select distinct(papers.key), * from papers join authors on papers.key=authors.key join abstracts on authors.key=abstracts.key %@ order by papers.year desc, papers.title asc) where key = '%@' group by key;", [self queryPostFilter:tokens], [rs stringForColumn:@"key"]];
+			NSLog(@"postfilter: %@", query2);
+			FMResultSet *rs2 = [db executeQuery:query2, nil];
 			while ([rs2 next]) {
 				// check whether we have been cancelled
 				if (!shouldContinueSearch) {	
@@ -970,6 +938,10 @@
 				if ([authors count] > 0)
 					[paper setValue:authors forKey:@"authors"];
 				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
 				
 				
 				// journals
@@ -983,12 +955,20 @@
 				if ([journals count] > 0)
 					[paper setValue:journals forKey:@"journal"];
 				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
 				
 				
 				// abstract and bibtex
 				[paper setValue:[db stringForQuery:@"select abstract from abstracts where key = ?", [rs stringForColumn:@"key"], nil] forKey:@"abstract"];
 				[paper setValue:[db stringForQuery:@"select bibtex from abstracts where key = ?", [rs stringForColumn:@"key"], nil] forKey:@"bibtex"];
 				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
 				
 				
 				// publicationTypes
@@ -1000,6 +980,10 @@
 				if ([publicationTypes count] > 0)
 					[paper setValue:publicationTypes forKey:@"publicationTypes"];
 				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
 				
 				
 				// doi
@@ -1032,6 +1016,10 @@
 				// year (must be NSNumber!)
 				[paper setValue:[[NSNumber alloc] initWithInteger:[[rs stringForColumn:@"year"] integerValue]] forKey:@"year"];
 				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
 				
 				
 				// --- additional meta data ---
@@ -1046,6 +1034,10 @@
 				//[paper setValue:[rs stringForColumn:@"series"] forKey:@"series"];
 				//[paper setValue:[rs stringForColumn:@"type"] forKey:@"type"];
 				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
 				
 				
 				if (paper) {
@@ -1077,14 +1069,12 @@
 			[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
 		}
 	}
-	[rs close]; 
-	
-	// check whether we have been cancelled
-	if (!shouldContinueSearch) {	
-		goto cleanup;	
-	}
+	[rs close];
 	
 cleanup:
+	
+	if (rs != nil)
+		[rs close];
 	
 	// close the db
 	[db close];
