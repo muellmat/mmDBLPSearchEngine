@@ -750,18 +750,6 @@
 		goto cleanup;	
 	}
 	
-	// Store the number of total articles matching the query
-	if (results > 0) {
-		results = [db intForQuery:@"select count(key) as n from (select distinct(key), key from papers);"];
-		[self setItemsFound:[NSNumber numberWithInteger:results]];
-		[del didFindResults:self];
-	}
-	
-	// check whether we have been cancelled
-	if (!shouldContinueSearch) {	
-		goto cleanup;	
-	}
-	
 	// Check whether we got anything at all
 	if (results == 0) {
 		[self setStatusString:NSLocalizedStringFromTableInBundle(
@@ -779,12 +767,7 @@
 															 [NSBundle bundleForClass:[self class]], 
 															 @"Status message shown while fetching the metadata for the found papers")];
 	
-	[self setRetrievedItems:[NSNumber numberWithInt:0]];
-	[self setItemsToRetrieve:[NSNumber numberWithInteger:results]];	
 	
-	// update status
-	[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-						   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 	
 	// check whether we have been cancelled
 	if (!shouldContinueSearch) {	
@@ -795,8 +778,27 @@
 	
 	
 	
+	// Store the number of total articles matching the query
+	if (results > 0) {
+		results = [db intForQuery:@"select count(key) as n from (select distinct(key), key from papers);"];
+		[self setItemsFound:[NSNumber numberWithInteger:results]];
+		[del didFindResults:self];
+		
+		
+		[self setRetrievedItems:[NSNumber numberWithInt:0]];
+		[self setItemsToRetrieve:[NSNumber numberWithInteger:results]];
+		
+		// update status
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
+							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+		
+	}
 	
 	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {	
+		goto cleanup;	
+	}
 	
 	
 	// Fetch authors and abstract/bibtex for each key
@@ -804,6 +806,18 @@
 	NSLog(@"prefilter: %@", query1);
 	FMResultSet *rs = [db executeQuery:query1, nil];
 	while ([rs next]) {
+		
+		
+		
+		// Update count
+		[self incrementRetrievedItemsWith:1];		
+		[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
+		
+		// update status
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
+							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+		
+		
 		// Fetch authors, abstract and bibtex
 		if ([rs stringForColumn:@"key"]) {
 			// check whether we have been cancelled
@@ -910,12 +924,16 @@
 			
 			
 			
+			
+			
 			// We got all meta data, let's display the papers now
 			NSMutableArray *papers = [NSMutableArray arrayWithCapacity:100];
 			NSString *query2 = [NSString stringWithFormat:@"select distinct * from (select distinct(papers.key), * from papers join authors on papers.key=authors.key join abstracts on authors.key=abstracts.key %@ order by papers.year desc, papers.title asc) where key = '%@' group by key;", [self queryPostFilter:tokens], [rs stringForColumn:@"key"]];
 			NSLog(@"postfilter: %@", query2);
 			FMResultSet *rs2 = [db executeQuery:query2, nil];
 			while ([rs2 next]) {
+				
+				
 				// check whether we have been cancelled
 				if (!shouldContinueSearch) {	
 					goto cleanup;	
@@ -1041,35 +1059,40 @@
 				
 				
 				if (paper) {
-					// Update count
-					[self incrementRetrievedItemsWith:[[self retrievedItems] intValue]+1];		
-					[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
-					
-					// update status
-					[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-										   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
-					
 					[papers addObject:paper];
+				}
+				
+				// Check whether we got anything at all
+				if ([papers count] == 0) {
+					[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+					goto cleanup;	
+				}
+				
+				// Hand them to the delegate
+				[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
+				
+				// check whether we have been cancelled
+				if (!shouldContinueSearch) {	
+					goto cleanup;	
+				}
+				
+				
+				// Check whether we got anything at all
+				if ([papers count] == 0) {
+					[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+					goto cleanup;	
 				}
 			}
 			[rs2 close];
-			
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
-			// Check whether we got anything at all
-			if ([papers count] == 0) {
-				[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
-				goto cleanup;	
-			}
-			
-			// Hand them to the delegate
-			[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
 		}
 	}
 	[rs close];
+	
+	
+	
+	
+	
+	
 	
 cleanup:
 	
