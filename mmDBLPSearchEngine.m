@@ -821,7 +821,7 @@
 		// Fetch authors, abstract and bibtex
 		if ([rs stringForColumn:@"key"]) {
 			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
+			if (!shouldContinueSearch) {
 				goto cleanup;	
 			}
 			
@@ -935,8 +935,11 @@
 				
 				
 				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					goto cleanup;	
+				if (!shouldContinueSearch) {
+					if (rs2 != nil)
+						[rs2 close];
+					
+					goto cleanup;
 				}
 				
 				NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
@@ -957,7 +960,10 @@
 					[paper setValue:authors forKey:@"authors"];
 				
 				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
+				if (!shouldContinueSearch) {
+					if (rs2 != nil)
+						[rs2 close];
+					
 					goto cleanup;	
 				}
 				
@@ -974,7 +980,10 @@
 					[paper setValue:journals forKey:@"journal"];
 				
 				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
+				if (!shouldContinueSearch) {
+					if (rs2 != nil)
+						[rs2 close];
+					
 					goto cleanup;	
 				}
 				
@@ -1000,6 +1009,9 @@
 				
 				// check whether we have been cancelled
 				if (!shouldContinueSearch) {	
+					if (rs2 != nil)
+						[rs2 close];
+					
 					goto cleanup;	
 				}
 				
@@ -1053,7 +1065,10 @@
 				//[paper setValue:[rs stringForColumn:@"type"] forKey:@"type"];
 				
 				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
+				if (!shouldContinueSearch) {
+					if (rs2 != nil)
+						[rs2 close];
+					
 					goto cleanup;	
 				}
 				
@@ -1072,13 +1087,19 @@
 				[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
 				
 				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
+				if (!shouldContinueSearch) {
+					if (rs2 != nil)
+						[rs2 close];
+					
 					goto cleanup;	
 				}
 				
 				
 				// Check whether we got anything at all
 				if ([papers count] == 0) {
+					if (rs2 != nil)
+						[rs2 close];
+					
 					[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
 					goto cleanup;	
 				}
