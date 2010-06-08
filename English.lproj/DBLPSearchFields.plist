@@ -12,16 +12,20 @@
 		<string>[TIAB]</string>
 		<key>Author</key>
 		<string>[AU]</string>
+		<key>Author (Given Name)</key>
+		<string>[AUG]</string>
+		<key>Author (Family Name)</key>
+		<string>[AUF]</string>
 		<key>Journal</key>
 		<string>[TA]</string>
 		<key>Volume</key>
 		<string>[VI]</string>
-		<key>Issue</key>
-		<string>[IP]</string>
 		<key>Pages</key>
 		<string>[PG]</string>
-		<key>Date</key>
-		<string>[DP]</string>
+		<key>Year</key>
+		<string>[YR]</string>
+		<key>Month</key>
+		<string>[MN]</string>
 		<key>DBLP Key</key>
 		<string>[DK]</string>
 		<key>DOI</key>
@@ -35,12 +39,14 @@
 		<string>Title+Abstract</string>
 		<string>SPACER</string>
 		<string>Author</string>
+		<string>Author (Given Name)</string>
+		<string>Author (Family Name)</string>
 		<string>SPACER</string>
 		<string>Journal</string>
 		<string>Volume</string>
-		<string>Issue</string>
 		<string>Pages</string>
-		<string>Date</string>
+		<string>Year</string>
+		<string>Month</string>
 		<string>SPACER</string>
 		<string>DBLP Key</string>
 		<string>DOI</string>

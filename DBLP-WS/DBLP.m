@@ -146,7 +146,8 @@
 
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"];     
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef
@@ -171,7 +172,8 @@
 @implementation all_journal_titles
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"]; 
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef
@@ -207,7 +209,8 @@
 
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"]; 
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef
@@ -279,7 +282,8 @@
 
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"]; 
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef
@@ -304,7 +308,8 @@
 @implementation all_proceeding_titles
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"]; 
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef
@@ -346,7 +351,8 @@
 
 - (id) resultValue
 {
-    return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    //return [[super getResultDictionary] objectForKey: @"resultArray"];    
+    return [[[super getResultDictionary] objectForKey:@"/Result"] objectForKey:@"return"]; 
 }
 
 - (WSMethodInvocationRef) genCreateInvocationRef

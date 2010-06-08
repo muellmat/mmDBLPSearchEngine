@@ -27,9 +27,7 @@
 
 
 @interface mmDBLPSearchEngine (dblp_methods)
-	-(NSString*)queryPreFilter:(NSArray*)tokens;
-	-(NSString*)queryPostFilter:(NSArray*)tokens;
-	-(NSString*)sqlFragmentByToken:(MTQueryTermToken*)token;
+
 @end
 
 #pragma mark 
@@ -37,167 +35,6 @@
 
 
 @implementation mmDBLPSearchEngine (dblp_methods)
-
--(NSString*)queryPreFilter:(NSArray*)tokens {
-	NSArray *codes = [NSArray arrayWithObjects:@"[TI]",@"[TA]",@"[VI]",@"[IP]",@"[PG]",@"[DP]",@"[DK]",@"[DOI]",nil];
-	int n = 0;
-	
-	NSEnumerator *e;
-	NSEnumerator *ee;
-	
-	MTQueryTermToken *token;
-	NSString *code;
-	
-	e = [tokens objectEnumerator];
-	while (token = [e nextObject]) {
-		ee = [codes objectEnumerator];
-		while (code = [ee nextObject]) {
-			if ([code isEqualToString:[token valueForKey:@"code"]]) {
-				n++;
-			}
-		}
-	}
-	
-	if (n == 1) {
-		e = [tokens objectEnumerator];
-		while (token = [e nextObject]) {
-			ee = [codes objectEnumerator];
-			while (code = [ee nextObject]) {
-				if ([code isEqualToString:[token valueForKey:@"code"]]) {
-					return [NSString stringWithFormat:@"where %@", [self sqlFragmentByToken:token]];
-				}
-			}
-		}
-	} else if (n >= 2) {
-		NSMutableString *where = [[NSMutableString alloc] init];
-		[where appendString:@"where "];
-		BOOL first = YES;
-		e = [tokens objectEnumerator];
-		while (token = [e nextObject]) {
-			ee = [codes objectEnumerator];
-			while (code = [ee nextObject]) {
-				if ([code isEqualToString:[token valueForKey:@"code"]]) {
-					if (first) {
-						first = NO;
-					} else {
-						[where appendString:@"and "];
-					}
-					[where appendString:[self sqlFragmentByToken:token]];
-					[where appendString:@" "];
-				}
-			}
-		}
-		return where;
-	}
-	
-	return @"";
-}
-
--(NSString*)queryPostFilter:(NSArray*)tokens {
-	NSArray *codes = [NSArray arrayWithObjects:@"[TIAB]",@"[AU]",@"[TI]",@"[TA]",@"[VI]",@"[IP]",@"[PG]",@"[DP]",@"[DOI]",nil];
-	int n = 0;
-	
-	BOOL first = YES;
-	NSEnumerator *e;
-	NSEnumerator *ee;
-	
-	MTQueryTermToken *token;
-	NSString *code;
-	
-	NSMutableString *all = [[NSMutableString alloc] init];
-	[all appendString:@""];
-	first = YES;
-	e = [tokens objectEnumerator];
-	while (token = [e nextObject]) {
-		if ([@"ALL" isEqualToString:[token valueForKey:@"code"]]) {
-			if (first) {
-				first = NO;
-			} else {
-				[all appendString:@"and "];
-			}
-			[all appendString:[self sqlFragmentByToken:token]];
-			[all appendString:@" "];
-		}
-	}
-	
-	
-	e = [tokens objectEnumerator];
-	while (token = [e nextObject]) {
-		ee = [codes objectEnumerator];
-		while (code = [ee nextObject]) {
-			if ([code isEqualToString:[token valueForKey:@"code"]]) {
-				n++;
-			}
-		}
-	}
-	
-	if (n >= 1) {
-		NSMutableString *where = [[NSMutableString alloc] init];
-		[where appendString:@"where "];
-		if (![@"" isEqualToString:all]) {
-			[where appendString:all];
-			[where appendString:@"and "];
-		}
-		first = YES;
-		e = [tokens objectEnumerator];
-		while (token = [e nextObject]) {
-			ee = [codes objectEnumerator];
-			while (code = [ee nextObject]) {
-				if ([code isEqualToString:[token valueForKey:@"code"]]) {
-					if (first) {
-						first = NO;
-					} else {
-						[where appendString:@"and "];
-					}
-					[where appendString:[self sqlFragmentByToken:token]];
-					[where appendString:@" "];
-				}
-			}
-		}
-		return where;
-	} else if (n == 0 && ![@"" isEqualToString:all]) {
-		return [NSString stringWithFormat:@"where %@", all];
-	}
-	
-	return @"";
-}
-
--(NSString*)sqlFragmentByToken:(MTQueryTermToken*)token {
-	if ([[token valueForKey:@"code"] isEqualToString:@"[ALL]"])
-		return [NSString stringWithFormat:@" (papers.key like '%%%@%%' or papers.conference like '%%%@%%' or papers.doi like '%%%@%%' or papers.ee like '%%%@%%' or papers.isbn like '%%%@%%' or papers.month like '%%%@%%' or papers.number like '%%%@%%' or papers.pages like '%%%@%%' or papers.publisher like '%%%@%%' or papers.series like '%%%@%%' or papers.source like '%%%@%%' or papers.title like '%%%@%%' or papers.type like '%%%@%%' or papers.volume like '%%%@%%' or papers.year like '%%%@%%' or abstracts.abstract like '%%%@%%' or authors.fullname like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"], [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[TI]"])
-		return [NSString stringWithFormat:@" papers.title like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[TIAB]"])
-		return [NSString stringWithFormat:@" (papers.title like '%%%@%%' and abstracts.abstract like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[AU]"])
-		return [NSString stringWithFormat:@" authors.fullname like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[TA]"])
-		return [NSString stringWithFormat:@" (papers.source like '%%%@%%' or papers.publisher like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[VI]"])
-		return [NSString stringWithFormat:@" papers.volume like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[IP]"])
-		return [NSString stringWithFormat:@" papers.number like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[PG]"])
-		return [NSString stringWithFormat:@" papers.pages like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[DP]"])
-		return [NSString stringWithFormat:@" (papers.year like '%%%@%%' or papers.month like '%%%@%%')", [token valueForKey:@"token"], [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[DK]"])
-		return [NSString stringWithFormat:@" papers.key like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	if ([[token valueForKey:@"code"] isEqualToString:@"[DOI]"])
-		return [NSString stringWithFormat:@" papers.doi like '%%%@%%'", [token valueForKey:@"token"]];
-	
-	return @"";
-}
 
 @end
 
@@ -629,505 +466,362 @@
 		// Warning: CHECK WHAT HAPPENS IF CALLED AGAIN, AND CANCEL PREVIOUS ONE
 	}
 	// Now we are
-	isSearching = YES;
-	
-	NSInteger results = 0;
-	
-	// Generate the query from the tokens
-	/*
-	NSString *currentQuery = [self queryStringFromTokens:tokens prefix:nil];
-	if (!currentQuery) {
-		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
-		[userInfo setObject:NSLocalizedStringFromTableInBundle(@"Could not create query from searchfield input", nil, [NSBundle bundleForClass:[self class]], @"Error message when query can't be created") forKey:NSLocalizedDescriptionKey];
-		[userInfo setObject:NSLocalizedStringFromTableInBundle(@"Please ensure you have created a proper query.", nil, [NSBundle bundleForClass:[self class]], @"Recovery suggestion when query can't be created") forKey:NSLocalizedRecoverySuggestionErrorKey];		
-		[self setSearchError:[NSError errorWithDomain:@"DBLPSearchController" code:1 userInfo:userInfo]];
-		goto cleanup;
-	}
-	*/
-	
-	// Create a SQLite DB in /tmp where we can store our query results
-	
-	// First delete the old db, if it exists
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    [fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
-    
-	// Now create a new db
-    FMDatabase* db = [FMDatabase databaseWithPath:@"/tmp/PapersPluginDBLPTempQueryResult.db"];
-    if (![db open])
-        NSLog(@"Could not open db.");
-	
-	// Set up tables
-    [db beginTransaction];
-	[db executeUpdate:@"create table papers    (key text, conference text, doi text, ee text, isbn text, month integer, number integer, pages text, publisher text, series text, source text, title text, type text, volume integer, year integer)"];
-	[db executeUpdate:@"create table authors   (key text, fullname text, firstnames text, lastname text, initials text)"];
-	[db executeUpdate:@"create table abstracts (key text, abstract text, bibtex text)"];
-	[db commit];
 	
 	
 	
 	// Inform delegate we're about to start
+	
 	id <PapersSearchPluginDelegate> del = [self delegate];
 	[del didBeginSearch:self];
-	[self setStatusString:NSLocalizedStringFromTableInBundle(
-		@"Connecting with DBLP...", 
-		nil,
-		[NSBundle bundleForClass:[self class]], 
-		@"Status message shown when plugin is connecting to the service")];
-	[self setStatusString:NSLocalizedStringFromTableInBundle(
-															 @"Connected to DBLP...", 
-															 nil, 
-															 [NSBundle bundleForClass:[self class]], 
-															 @"Status message shown when the plugin has succesfully connected to the service")];
+	// TODO: ping DBLP server 
+	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Connecting with DBLP...", nil,[NSBundle bundleForClass:[self class]], @"Status message shown when plugin is connecting to the service")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Connected to DBLP...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when the plugin has succesfully connected to the service")];
 	
 	// check whether we have been cancelled
-	if (!shouldContinueSearch) {	
-		goto cleanup;	
+	if (!shouldContinueSearch) {
+		goto cleanup;
 	}
 	
-	// Send a request for each token, save the result in the db
-	NSEnumerator *e1 = [tokens objectEnumerator];
+	// Create a SQLite DB in /tmp where we can store our query results
+	
+	// First delete the old db, if it exists
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	[fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
+	[fileManager release];
+	
+	// Now create a new db
+	FMDatabase* db = [FMDatabase databaseWithPath:@"/tmp/PapersPluginDBLPTempQueryResult.db"];
+	if (![db open]) {
+		// TODO: Correct error handling
+		NSLog(@"Could not open db.");
+	}
+	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {
+		goto cleanup;
+	}
+	
+	unsigned int i = 0;
+	unsigned int results = 0;
+	NSEnumerator *e;
+	NSDictionary *d;
+	
+	unsigned int tokens_retrieved = 0;
+	unsigned int tokens_total = 0;
+	
+	unsigned int papers_retrieved = 0;
+	unsigned int papers_total = 0;
+	
+	
+	
+	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Calculating objects to retrieve...", nil, [NSBundle bundleForClass:[self class]], @"")];
+	
+	
+	// create tables
+	
+	unsigned int n_keyword = 0;
+	unsigned int n_author = 0;
+	unsigned int n_dblpkey = 0;
+	NSMutableArray *query_keyword = [NSMutableArray array];
+	NSMutableArray *query_author = [NSMutableArray array];
+	NSMutableArray *query_dblpkey = [NSMutableArray array];
+	e = [tokens objectEnumerator];
 	id token;
-	while (token = [e1 nextObject]) {
-		[self setStatusString:NSLocalizedStringFromTableInBundle(
-																 @"Calculating objects to retrieve...", 
-																 nil, 
-																 [NSBundle bundleForClass:[self class]], 
-																 @"")];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {	
-			goto cleanup;	
+	[db beginTransaction];
+	while (token = [e nextObject]) {
+		if ([@"[ALL]"  isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[TI]"   isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[TIAB]" isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[YR]"   isEqualToString:[token valueForKey:@"code"]]) {
+			[query_keyword addObject:token];
+			[db executeUpdate:[NSString stringWithFormat:@"create table keyword%d (dblpkey text primary key, conference text, doi text, ee text, isbn text, month integer, number integer, pages text, publisher text, series text, source text, title text, type text, volume integer, year integer)", n_keyword]];
+			n_keyword += 1;
 		}
 		
-		// Send the request for the current token
+		if ([@"[AUF]" isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[AUG]" isEqualToString:[token valueForKey:@"code"]]) {
+			[query_author addObject:token];
+			[db executeUpdate:[NSString stringWithFormat:@"create table author%d (dblpkey text primary key, title text, year integer, conference text, author text, type text, ee text, source text)", n_author]];
+			n_author += 1;
+		}
+		
+		if ([@"[DK]" isEqualToString:[token valueForKey:@"code"]]) {
+			[query_dblpkey addObject:token];			
+			[db executeUpdate:[NSString stringWithFormat:@"create table dblpkey%d (dblpkey text primary key, title text, year integer, conference text, abstract text, type text, ee text, source text, bibtex text)", n_dblpkey]];
+			n_dblpkey += 1;
+		}
+	}
+	[db commit];
+	tokens_total = n_keyword+n_author+n_dblpkey;
+	
+	
+	
+	
+	
+	NSMutableString *keyword_inner_join_pre = [NSMutableString stringWithString:@""];
+	NSMutableString *keyword_inner_join_post = [NSMutableString stringWithString:@""];
+	
+	if (n_keyword == 1 || n_keyword > 1) {
+		[keyword_inner_join_post appendFormat:@"keyword0"];
+	}
+	
+	for (i=1; i<n_keyword; i++) {
+		[keyword_inner_join_pre appendString:@"("];
+		[keyword_inner_join_post appendFormat:@" inner join keyword%d using(dblpkey))", i];
+	}
+	
+	NSString *keyword_inner_join = [NSString stringWithFormat:@"%@%@", keyword_inner_join_pre, keyword_inner_join_post];
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// start to fetch data for tokens
+	for (i=0; i<[query_keyword count]; i++) {
+		tokens_retrieved += 1;
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching metadata for search token %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), tokens_retrieved, tokens_total]];
+		
 		all_publications_keywords_year* ws = [[all_publications_keywords_year alloc] init];
-		[ws setParameters:[token valueForKey:@"token"] 
+		[ws setParameters:[[query_keyword objectAtIndex:i] valueForKey:@"token"] 
 			 in_startYear:[NSNumber numberWithInteger:0] 
 			   in_endYear:[NSNumber numberWithInteger:0] 
 				 in_limit:[NSNumber numberWithInteger:1000]]; // hard-coded limit to 1000! use prefkey instead!!!
 		NSDictionary *result = [ws resultValue];
 		results += [result count];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {	
-			goto cleanup;	
-		}
-		
-		// save the result in the db
 		[db beginTransaction];
-		NSEnumerator *e2 = [result objectEnumerator];
-		NSDictionary *item;
-		while ((item = [e2 nextObject])) {
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
+		e = [result objectEnumerator];
+		while ((d = [e nextObject])) {
+			[db executeUpdate:[NSString stringWithFormat:@"insert into keyword%d (dblpkey, conference, doi, ee, isbn, month, number, pages, publisher, series, source, title, type, volume, year) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", i],
+			 [d objectForKey:@"dblp_key"],
+			 [d objectForKey:@"conference"],
+			 [d objectForKey:@"doi"],
+			 [d objectForKey:@"ee"],
+			 [d objectForKey:@"isbn"],
+			 [d objectForKey:@"month"],
+			 [d objectForKey:@"number"],
+			 [d objectForKey:@"pages"],
+			 [d objectForKey:@"publisher"],
+			 [d objectForKey:@"series"],
+			 [d objectForKey:@"source"],
+			 [d objectForKey:@"title"],
+			 [d objectForKey:@"type"],
+			 [d objectForKey:@"volume"],
+			 [d objectForKey:@"year"]
+			 ];
+			
+			if ([db hadError]) {
+				NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
 			}
 			
-			[db executeUpdate:@"insert into papers (key, conference, doi, ee, isbn, month, number, pages, publisher, series, source, title, type, volume, year) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-			 [item objectForKey:@"dblp_key"],
-			 [item objectForKey:@"conference"],
-			 [item objectForKey:@"doi"],
-			 [item objectForKey:@"ee"],
-			 [item objectForKey:@"isbn"],
-			 [item objectForKey:@"month"],
-			 [item objectForKey:@"number"],
-			 [item objectForKey:@"pages"],
-			 [item objectForKey:@"publisher"],
-			 [item objectForKey:@"series"],
-			 [item objectForKey:@"source"],
-			 [item objectForKey:@"title"],
-			 [item objectForKey:@"type"],
-			 [item objectForKey:@"volume"],
-			 [item objectForKey:@"year"]
-			 ];
+			//NSLog(@"insert into keyword%d: %@", i, [d objectForKey:@"title"]);
 		}
 		[db commit];
 		[ws release];
 	}
 	
-	// check whether we have been cancelled
-	if (!shouldContinueSearch) {	
-		goto cleanup;	
+	for (i=0; i<[query_author count]; i++) {
+		tokens_retrieved += 1;
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching metadata for search token %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), tokens_retrieved, tokens_total]];
+		 
+		all_publications_author_year* ws = [[all_publications_author_year alloc] init];
+		if ([@"AUG" isEqualToString:[[query_keyword objectAtIndex:i] valueForKey:@"code"]]) {
+			[ws setParameters:[[query_keyword objectAtIndex:i] valueForKey:@"token"]  
+				in_familyName:@"" 
+				 in_startYear:[NSNumber numberWithInteger:1] 
+				   in_endYear:[NSNumber numberWithInteger:9999]];
+		} else {
+			[ws setParameters:@"" 
+				in_familyName:[[query_keyword objectAtIndex:i] valueForKey:@"token"]  
+				 in_startYear:[NSNumber numberWithInteger:1] 
+				   in_endYear:[NSNumber numberWithInteger:9999]];
+		}
+		NSDictionary *result = [ws resultValue];
+		results += [result count];
+		[db beginTransaction];
+		e = [result objectEnumerator];
+		while ((d = [e nextObject])) {
+			[db executeUpdate:[NSString stringWithFormat:@"insert into author%d (dblpkey, title, year, conference, author, type, ee, source) values (?, ?, ?, ?, ?, ?, ?, ?)", i],
+			 [d objectForKey:@"dblp_key"],
+			 [d objectForKey:@"title"],
+			 [d objectForKey:@"year"],
+			 [d objectForKey:@"conference"],
+			 [d objectForKey:@"author"],
+			 [d objectForKey:@"type"],
+			 [d objectForKey:@"ee"],
+			 [d objectForKey:@"source"]
+			 ];
+			
+			if ([db hadError]) {
+				NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+			}
+			//NSLog(@"insert into author%d: %@", i, [d objectForKey:@"title"]);
+		}
+		[db commit];
+		[ws release];
 	}
+	
+	for (i=0; i<[query_dblpkey count]; i++) {
+		tokens_retrieved += 1;
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching metadata for search token %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), tokens_retrieved, tokens_total]];
+		 
+		
+		publication_data2* ws = [[publication_data2 alloc] init];
+		[ws setParameters:[[query_keyword objectAtIndex:i] valueForKey:@"token"]];
+		NSDictionary *result = [ws resultValue];
+		results += [result count];
+		[db beginTransaction];
+		e = [result objectEnumerator];
+		while ((d = [e nextObject])) {
+			[db executeUpdate:[NSString stringWithFormat:@"insert into dblpkey%d (dblpkey, title, year, conference, abstract, type, ee, source, bibtex) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", i],
+			 [d objectForKey:@"dblp_key"],
+			 [d objectForKey:@"title"],
+			 [d objectForKey:@"year"],
+			 [d objectForKey:@"conference"],
+			 [d objectForKey:@"abstract"],
+			 [d objectForKey:@"type"],
+			 [d objectForKey:@"ee"],
+			 [d objectForKey:@"source"]
+			 ];
+			
+			if ([db hadError]) {
+				NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+			}
+			//NSLog(@"insert into dblpkey%d: %@", i, [d objectForKey:@"title"]);
+		}
+		[db commit];
+		[ws release];
+	}
+	
 	
 	// Check whether we got anything at all
 	if (results == 0) {
-		[self setStatusString:NSLocalizedStringFromTableInBundle(
-			@"No Papers found.", 
-			nil, 
-			[NSBundle bundleForClass:[self class]], 
-			@"Status message shown when no results were found for the query")];
+		[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
 		goto cleanup;	
 	}
 	
 	
+	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Fetching Papers...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the found papers")];
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Fetching Papers...", 
-															 nil, 
-															 [NSBundle bundleForClass:[self class]], 
-															 @"Status message shown while fetching the metadata for the found papers")];
-	
-	
-	
-	// check whether we have been cancelled
-	if (!shouldContinueSearch) {	
-		goto cleanup;	
-	}
-	
-	
-	
-	
-	
+	/*
 	// Store the number of total articles matching the query
 	if (results > 0) {
-		results = [db intForQuery:@"select count(key) as n from (select distinct(key), key from papers);"];
 		[self setItemsFound:[NSNumber numberWithInteger:results]];
 		[del didFindResults:self];
-		
-		
+				
 		[self setRetrievedItems:[NSNumber numberWithInt:0]];
 		[self setItemsToRetrieve:[NSNumber numberWithInteger:results]];
 		
 		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
-		
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];		
 	}
+	*/
 	
 	
-	// check whether we have been cancelled
-	if (!shouldContinueSearch) {	
-		goto cleanup;	
-	}
 	
 	
-	// Fetch authors and abstract/bibtex for each key
-	NSString *query1 = [NSString stringWithFormat:@"select distinct(papers.key), * from papers %@ order by papers.year desc, papers.title asc;", [self queryPreFilter:tokens]];
-	NSLog(@"prefilter: %@", query1);
-	FMResultSet *rs = [db executeQuery:query1, nil];
+	NSString *sql_final = [NSString stringWithFormat:@"select * from %@ order by year desc, month desc", keyword_inner_join];
+	papers_total = [db intForQuery:[NSString stringWithFormat:@"select count(dblpkey) from (%@)", sql_final]];
+	NSLog(@"%@", sql_final);
+	
+	FMResultSet *rs = [db executeQuery:sql_final, nil];
 	while ([rs next]) {
+		NSMutableArray *papers = [NSMutableArray arrayWithCapacity:1];
+		NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
+		
+		
+		papers_retrieved += 1;
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), papers_retrieved, papers_total]];
 		
 		
 		
-		// Update count
-		[self incrementRetrievedItemsWith:1];		
-		[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
-		
-		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 		
 		
-		// Fetch authors, abstract and bibtex
-		if ([rs stringForColumn:@"key"]) {
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {
-				goto cleanup;	
+		
+		NSLog(@"%@", [rs stringForColumn:@"title"]);
+		
+		
+		
+		// doi
+		[paper setValue:[rs stringForColumn:@"doi"] forKey:@"doi"];
+		
+		// pages
+		[paper setValue:[rs stringForColumn:@"pages"] forKey:@"pages"];
+		
+		// url / path (to pdf, if available)
+		if ([rs stringForColumn:@"ee"] && ![@"" isEqualToString:[rs stringForColumn:@"ee"]]) {
+			[paper setValue:[rs stringForColumn:@"ee"] forKey:@"url"];
+			
+			// if PDF is available
+			NSString *regex = @"^.*pdf$";
+			NSPredicate *regextest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
+			if ([regextest evaluateWithObject:[rs stringForColumn:@"ee"]] == YES) {
+				[paper setValue:[rs stringForColumn:@"ee"] forKey:@"path"];
 			}
-			
-			// Fetch authors
-			NSDictionary *authors = nil;
-			publication_authors* ws1 = [[publication_authors alloc] init];
-			[ws1 setParameters:[rs stringForColumn:@"key"]];
-			authors = [ws1 resultValue];
-			
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
-			// save the result in the db
-			[db beginTransaction];
-			NSEnumerator *e3 = [authors objectEnumerator];
-			NSDictionary *author;
-			while ((author = [e3 nextObject])) {
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					goto cleanup;	
-				}
-				
-				NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
-				NSArray *parts = [[author objectForKey:@"author"] componentsSeparatedByCharactersInSet:whitespace];
-				NSString *lastName = [author objectForKey:@"author"];
-				NSMutableString *firstNames = [[NSMutableString alloc] initWithString:@""];
-				NSMutableString *initials = [[NSMutableString alloc] initWithString:@""];
-				int n = [parts count];
-				if (n >= 2) {
-					int last = n - 1;
-					firstNames = [NSMutableString stringWithString:@""];
-					initials = [NSMutableString stringWithString:@""];
-					int i = 0;
-					for (i=0; i<last; i++) {
-						[firstNames appendString:[parts objectAtIndex:i]];
-						[initials appendString:[[parts objectAtIndex:i] substringToIndex:1]];
-					}
-					lastName = [parts objectAtIndex:last];
-				}
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					goto cleanup;	
-				}
-				
-				[db executeUpdate:@"insert into authors (key, fullname, firstnames, lastname, initials) values (?, ?, ?, ?, ?)",
-				 [author objectForKey:@"dblp_key"],
-				 [author objectForKey:@"author"],
-				 [NSString stringWithFormat:@"%@", firstNames],
-				 lastName,
-				 [NSString stringWithFormat:@"%@", initials]
-				 ];
-			}
-			[db commit];
-			[ws1 release];
-			
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
-			// Fetch abstract/bibtex
-			NSDictionary *abstract = nil;
-			publication_data2* ws2 = [[publication_data2 alloc] init];
-			[ws2 setParameters:[rs stringForColumn:@"key"]];
-			abstract = [ws2 resultValue];
-			
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
-			// save the result in the db
-			[db beginTransaction];
-			NSEnumerator *e4 = [abstract objectEnumerator];
-			NSDictionary *item;
-			while ((item = [e4 nextObject])) {
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					goto cleanup;	
-				}
-				
-				[db executeUpdate:@"insert into abstracts (key, abstract, bibtex) values (?, ?, ?)",
-				 [item objectForKey:@"dblp_key"],
-				 [item objectForKey:@"abstract"],
-				 [item objectForKey:@"bibtex"]
-				 ];
-			}
-			[db commit];
-			[ws2 release];
-			
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
-			
-			
-			
-			
-			
-			
-			// We got all meta data, let's display the papers now
-			NSMutableArray *papers = [NSMutableArray arrayWithCapacity:100];
-			NSString *query2 = [NSString stringWithFormat:@"select distinct * from (select distinct(papers.key), * from papers join authors on papers.key=authors.key join abstracts on authors.key=abstracts.key %@ order by papers.year desc, papers.title asc) where key = '%@' group by key;", [self queryPostFilter:tokens], [rs stringForColumn:@"key"]];
-			NSLog(@"postfilter: %@", query2);
-			FMResultSet *rs2 = [db executeQuery:query2, nil];
-			while ([rs2 next]) {
-				
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {
-					if (rs2 != nil)
-						[rs2 close];
-					
-					goto cleanup;
-				}
-				
-				NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
-				
-				// authors
-				NSMutableArray *authors = [NSMutableArray arrayWithCapacity:100];
-				FMResultSet *rs3 = [db executeQuery:@"select * from authors where key = ? order by lastname, firstnames;", [rs stringForColumn:@"key"], nil];
-				while ([rs3 next]) {
-					NSMutableDictionary *author = [NSMutableDictionary dictionaryWithCapacity:50];
-					[author setValue:[rs3 stringForColumn:@"firstnames"] forKey:@"firstName"];
-					[author setValue:[rs3 stringForColumn:@"initials"] forKey:@"initials"];
-					[author setValue:[rs3 stringForColumn:@"lastname"] forKey:@"lastName"];
-					if (author)
-						[authors addObject:author];
-				}
-				[rs3 close];
-				if ([authors count] > 0)
-					[paper setValue:authors forKey:@"authors"];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {
-					if (rs2 != nil)
-						[rs2 close];
-					
-					goto cleanup;	
-				}
-				
-				
-				// journals
-				NSMutableArray *journals = [NSMutableArray arrayWithCapacity:1];
-				NSMutableDictionary *journal = [NSMutableDictionary dictionaryWithCapacity:3];
-				[journal setValue:[rs stringForColumn:@"source"] forKey:@"name"];
-				[journal setValue:[rs stringForColumn:@"publisher"] forKey:@"publisher"];
-				[journal setValue:[rs stringForColumn:@"number"] forKey:@"currentissue"];
-				if (journal)
-					[journals addObject:journal];
-				if ([journals count] > 0)
-					[paper setValue:journals forKey:@"journal"];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {
-					if (rs2 != nil)
-						[rs2 close];
-					
-					goto cleanup;	
-				}
-				
-				
-				// abstract and bibtex
-				[paper setValue:[db stringForQuery:@"select abstract from abstracts where key = ?", [rs stringForColumn:@"key"], nil] forKey:@"abstract"];
-				[paper setValue:[db stringForQuery:@"select bibtex from abstracts where key = ?", [rs stringForColumn:@"key"], nil] forKey:@"bibtex"];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					goto cleanup;	
-				}
-				
-				
-				// publicationTypes
-				NSMutableArray *publicationTypes = [NSMutableArray arrayWithCapacity:1];
-				NSMutableDictionary *publicationType = [NSMutableDictionary dictionaryWithCapacity:1];
-				[publicationType setValue:[rs stringForColumn:@"type"] forKey:@"name"];
-				if (publicationType)
-					[publicationTypes addObject:publicationType];
-				if ([publicationTypes count] > 0)
-					[paper setValue:publicationTypes forKey:@"publicationTypes"];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					if (rs2 != nil)
-						[rs2 close];
-					
-					goto cleanup;	
-				}
-				
-				
-				// doi
-				[paper setValue:[rs stringForColumn:@"doi"] forKey:@"doi"];
-				
-				// pages
-				[paper setValue:[rs stringForColumn:@"pages"] forKey:@"pages"];
-				
-				// url / path (to pdf, if available)
-				if ([rs stringForColumn:@"ee"] && ![@"" isEqualToString:[rs stringForColumn:@"ee"]]) {
-					[paper setValue:[rs stringForColumn:@"ee"] forKey:@"url"];
-					
-					// if PDF is available
-					NSString *regex = @"^.*pdf$";
-					NSPredicate *regextest = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", regex];
-					if ([regextest evaluateWithObject:[rs stringForColumn:@"ee"]] == YES) {
-						[paper setValue:[rs stringForColumn:@"ee"] forKey:@"path"];
-					}
-				}
-				
-				// identifier (= dblp_key)
-				[paper setValue:[rs stringForColumn:@"key"] forKey:@"identifier"];
-				
-				// title
-				[paper setValue:[rs stringForColumn:@"title"] forKey:@"title"];
-				
-				// volume
-				[paper setValue:[rs stringForColumn:@"volume"] forKey:@"volume"];
-				
-				// year (must be NSNumber!)
-				[paper setValue:[[NSNumber alloc] initWithInteger:[[rs stringForColumn:@"year"] integerValue]] forKey:@"year"];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {	
-					goto cleanup;	
-				}
-				
-				
-				// --- additional meta data ---
-				
-				// isbn
-				[paper setValue:[rs stringForColumn:@"isbn"] forKey:@"isbn"];
-				
-				// month
-				[paper setValue:[rs stringForColumn:@"month"] forKey:@"month"];
-				
-				//[paper setValue:[rs stringForColumn:@"conference"] forKey:@"conference"];
-				//[paper setValue:[rs stringForColumn:@"series"] forKey:@"series"];
-				//[paper setValue:[rs stringForColumn:@"type"] forKey:@"type"];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {
-					if (rs2 != nil)
-						[rs2 close];
-					
-					goto cleanup;	
-				}
-				
-				
-				if (paper) {
-					[papers addObject:paper];
-				}
-				
-				// Check whether we got anything at all
-				if ([papers count] == 0) {
-					[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
-					goto cleanup;	
-				}
-				
-				// Hand them to the delegate
-				[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
-				
-				// check whether we have been cancelled
-				if (!shouldContinueSearch) {
-					if (rs2 != nil)
-						[rs2 close];
-					
-					goto cleanup;	
-				}
-				
-				
-				// Check whether we got anything at all
-				if ([papers count] == 0) {
-					if (rs2 != nil)
-						[rs2 close];
-					
-					[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
-					goto cleanup;	
-				}
-			}
-			[rs2 close];
+		}
+		
+		// identifier (= dblp_key)
+		[paper setValue:[rs stringForColumn:@"dblpkey"] forKey:@"identifier"];
+		
+		// title
+		[paper setValue:[rs stringForColumn:@"title"] forKey:@"title"];
+		
+		// volume
+		[paper setValue:[rs stringForColumn:@"volume"] forKey:@"volume"];
+		
+		// year (must be NSNumber!)
+		[paper setValue:[[NSNumber alloc] initWithInteger:[[rs stringForColumn:@"year"] integerValue]] forKey:@"year"];
+		
+		// isbn
+		[paper setValue:[rs stringForColumn:@"isbn"] forKey:@"isbn"];
+		
+		// month
+		[paper setValue:[rs stringForColumn:@"month"] forKey:@"month"];
+		
+		if (paper) {
+			[papers addObject:paper];
+		}
+		
+		// Hand them to the delegate
+		[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
+		
+		// Check whether we got anything at all
+		if ([papers count] == 0) {
+			[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+			goto cleanup;	
+		}
+		
+		// check whether we have been cancelled
+		if (!shouldContinueSearch) {
+			goto cleanup;
 		}
 	}
 	[rs close];
 	
+	/*
+	NSEnumerator *e = [tokens objectEnumerator];
+	id token;
+	while (token = [e nextObject]) {
+		NSLog(@"%@", [token valueForKey:@"token"]);
+		NSLog(@"%@", [token valueForKey:@"field"]);
+		NSLog(@"%@", [token valueForKey:@"code"]);
+		NSLog(@"%@", [token valueForKey:@"operatorType"]);
+		NSLog(@"%@", [token valueForKey:@"predefined"]);
+		NSLog(@"\n");
+	}
+	*/
 	
-	
-	
-	
-	
-	
-cleanup:
-	
-	if (rs != nil)
-		[rs close];
-	
-	// close the db
+cleanup:/*
 	[db close];
+	[db release];
+	[e release];
+	[token release];*/
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(
-		@"Done.", 
-		nil, 
-		[NSBundle bundleForClass:[self class]], 
-		@"Status message shown after all metadata has been retrieved")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Done.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown after all metadata has been retrieved")];
 	
 	// done, let the delegate know
 	del = [self delegate];
