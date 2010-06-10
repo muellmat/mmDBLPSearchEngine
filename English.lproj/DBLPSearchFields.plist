@@ -28,8 +28,6 @@
 		<string>[MN]</string>
 		<key>DBLP Key</key>
 		<string>[DK]</string>
-		<key>DOI</key>
-		<string>[DOI]</string>
 	</dict>
 	<key>order</key>
 	<array>
@@ -49,7 +47,6 @@
 		<string>Month</string>
 		<string>SPACER</string>
 		<string>DBLP Key</string>
-		<string>DOI</string>
 	</array>
 </dict>
 </plist>
