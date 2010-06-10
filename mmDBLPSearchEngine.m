@@ -48,6 +48,7 @@ FMDatabase* db;
 
 @implementation mmDBLPSearchEngine (dblp_methods)
 
+// create a database where we temporarily store the search results
 -(void)setupDatabase {
 	// Create a SQLite DB in /tmp where we can store our query results
 	
@@ -60,10 +61,11 @@ FMDatabase* db;
 	db = [FMDatabase databaseWithPath:@"/tmp/PapersPluginDBLPTempQueryResult.db"];
 	if (![db open]) {
 		// TODO: Correct error handling
-		NSLog(@"Could not open db.");
+		//NSLog(@"Could not open db.");
 	}
 }
 
+// create tables for each token, authors and abstracts/bibtex
 -(void)createTables {
 	[db beginTransaction];
 	for (NSString* i in dbtokens) {
@@ -82,6 +84,7 @@ FMDatabase* db;
 	[db commit];
 }
 
+// fetch meta data for each token
 -(void)fetchDataForTokens {
 	int retrieved = 0;
 	int total = [searchtokens count];
@@ -91,6 +94,8 @@ FMDatabase* db;
 		for (NSString* j in [dbtokens objectForKey:i]) {
 			retrieved += 1;
 			[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching data for token %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), retrieved, total]];
+			
+			// uses three different operations of the WSDL
 			
 			if ([j hasPrefix:@"ANDkeyword"] || [j hasPrefix:@"ORkeyword"] || [j hasPrefix:@"NOTkeyword"]) {
 				all_publications_keywords_year* ws = [[all_publications_keywords_year alloc] init];
@@ -123,10 +128,8 @@ FMDatabase* db;
 					 ];
 					
 					if ([db hadError]) {
-						NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+						//NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
 					}
-					
-					//NSLog(@"insert into keyword%d: %@", i, [d objectForKey:@"title"]);
 				}
 				[db commit];
 				[ws release];
@@ -161,9 +164,8 @@ FMDatabase* db;
 					 ];
 					
 					if ([db hadError]) {
-						NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+						//NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
 					}
-					//NSLog(@"insert into author%d: %@", i, [d objectForKey:@"title"]);
 				}
 				[db commit];
 				[ws release];
@@ -188,9 +190,8 @@ FMDatabase* db;
 					 ];
 					
 					if ([db hadError]) {
-						NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
+						//NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
 					}
-					NSLog(@"insert into dblpkey%d: %@", i, [d objectForKey:@"title"]);
 				}
 				[db commit];
 				[ws release];
@@ -199,6 +200,7 @@ FMDatabase* db;
 	}
 }
 
+// filter search tokens; needed to create the tables
 -(NSDictionary*)dbtokens:(NSArray*)tokens {
 	NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
 	
@@ -304,6 +306,7 @@ FMDatabase* db;
 	return tmp;
 }
 
+// compose SQL code fragment (using INNER JOIN) for AND-tokens
 -(NSString*)sqlforAND {
 	int count = 0;
 	for (NSString* i in dbtokens) {
@@ -351,6 +354,7 @@ FMDatabase* db;
 	return @"";
 }
 
+// compose the final SQL query
 -(NSString*)sqlforTokens {
 	int count_and = 0;
 	NSString *first_table;
@@ -885,6 +889,7 @@ FMDatabase* db;
 		goto cleanup;
 	}
 	
+	// needed to create sql queries
 	authortokens = [[NSMutableDictionary alloc] init];
 	searchtokens = tokens;
 	dbtokens = [self dbtokens:tokens];
@@ -907,8 +912,6 @@ FMDatabase* db;
 		goto cleanup;
 	}
 	
-	
-	
 	// fetch data for tokens
 	[self fetchDataForTokens];
 	
@@ -917,18 +920,19 @@ FMDatabase* db;
 		goto cleanup;
 	}
 	
-	
-	
-	
-	NSString *sql = [NSString stringWithFormat:@"select distinct(dblpkey),* from (%@)", [self sqlforTokens]];
-	NSLog(@"\n\n\nsql: %@\n\n\n", sql);
-	
+	// counter
 	unsigned int papers_retrieved = 0;
 	unsigned int papers_total = 0;
 	
+	// filter results --> only search relevant additional meta data later
+	NSString *sql = [NSString stringWithFormat:@"select distinct(dblpkey),* from (%@)", [self sqlforTokens]];
 	papers_total = [db intForQuery:[NSString stringWithFormat:@"select count(*) from (%@)", sql]];
 	
-	NSLog(@"\n\n\ncount: %d\n\n%@\n\n\n", papers_total, [NSString stringWithFormat:@"select count(dblpkey) from (%@)", sql]);
+	// Check whether we got anything at all
+	if (papers_total == 0) {
+		[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+		goto cleanup;	
+	}
 	
 	// Store the number of total articles matching the query
 	if (papers_total > 0) {
@@ -940,9 +944,7 @@ FMDatabase* db;
 		[self setItemsToRetrieve:[NSNumber numberWithInteger:papers_total]];
 		
 		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
-		
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 	}
 	
 	// check whether we have been cancelled
@@ -950,6 +952,9 @@ FMDatabase* db;
 		goto cleanup;
 	}
 	
+	
+	
+	// now we have data for all tokens, let's get additional meta data for each one...
 	FMResultSet *rs = [db executeQuery:sql, nil];
 	while ([rs next]) {
 		// check whether we have been cancelled
@@ -960,6 +965,8 @@ FMDatabase* db;
 		NSMutableArray *papers = [NSMutableArray arrayWithCapacity:1];
 		NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
 		
+		
+		// increment counter
 		papers_retrieved += 1;
 		
 		// Update count
@@ -967,14 +974,14 @@ FMDatabase* db;
 		[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
 		
 		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), 
-							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 		
 		
 		// check whether we have been cancelled
 		if (!shouldContinueSearch) {
 			goto cleanup;
 		}
+		
 		
 		
 		// Fetch authors
@@ -998,6 +1005,7 @@ FMDatabase* db;
 				goto cleanup;	
 			}
 			
+			// split author's fullname into parts
 			NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
 			NSArray *parts = [[author objectForKey:@"author"] componentsSeparatedByCharactersInSet:whitespace];
 			NSString *lastName = [author objectForKey:@"author"];
@@ -1076,12 +1084,7 @@ FMDatabase* db;
 		
 		
 		
-		
-		
-		
-		
-		
-		// NSLog(@"%@", [rs stringForColumn:@"title"]);
+		// we got all meta data now --> let's compose the meta data to a paper dictionary
 		
 		// doi
 		[paper setValue:[rs stringForColumn:@"doi"] forKey:@"doi"];
@@ -1124,8 +1127,6 @@ FMDatabase* db;
 			goto cleanup;
 		}
 		
-		
-		
 		// authors
 		NSMutableArray *authors = [NSMutableArray arrayWithCapacity:100];
 		FMResultSet *rs_authors = [db executeQuery:@"select * from authors where dblpkey = ? order by lastname, firstnames;", [rs stringForColumn:@"dblpkey"], nil];
@@ -1145,8 +1146,6 @@ FMDatabase* db;
 		if (!shouldContinueSearch) {
 			goto cleanup;
 		}
-		
-		
 		
 		// journals
 		NSMutableArray *journals = [NSMutableArray arrayWithCapacity:1];
@@ -1168,8 +1167,6 @@ FMDatabase* db;
 			goto cleanup;
 		}
 		
-		
-		
 		// publicationTypes
 		NSMutableArray *publicationTypes = [NSMutableArray arrayWithCapacity:1];
 		NSMutableDictionary *publicationType = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -1184,17 +1181,12 @@ FMDatabase* db;
 			goto cleanup;
 		}
 		
-		
-		
-		
-		
-		
-		
-		
-		
+		// check paper before adding it
 		if (paper) {
 			[papers addObject:paper];
 		}
+		
+		// let's display the paper now
 		
 		// Hand them to the delegate
 		[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
@@ -1222,9 +1214,7 @@ cleanup:
 	
 	isSearching = NO;
 	
-	
 	// cleanup dblp stuff
-	
 	[db close];
 	
 	// cleanup nicely
