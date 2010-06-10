@@ -121,6 +121,12 @@ FMDatabase* db;
 
 // fetch meta data for each token
 -(void)fetchDataForTokens {
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		 @"Fetching metadata...", 
+		 nil, 
+		 [NSBundle bundleForClass:[self class]],
+		 @"Status message shown while fetching metadata for given articles.")];
+	
 	int retrieved = 0;
 	int total = [searchtokens count];
 	int results = 0;
@@ -128,7 +134,12 @@ FMDatabase* db;
 	for (NSString* i in dbtokens) {
 		for (NSString* j in [dbtokens objectForKey:i]) {
 			retrieved += 1;
-			[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching data for token %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), retrieved, total]];
+			[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(
+										@"Fetching meta data for token %d of %d...", 
+										nil, 
+										[NSBundle bundleForClass:[self class]], 
+										@"Status message shown while fetching the metadata for the specified tokens"), 
+								   retrieved, total]];
 			
 			// uses three different operations of the WSDL
 			
@@ -363,6 +374,14 @@ FMDatabase* db;
 	[tmp setObject:ANDdblpkey forKey:@"ANDdblpkey"];
 	[tmp setObject:ORdblpkey forKey:@"ORdblpkey"];
 	[tmp setObject:NOTdblpkey forKey:@"NOTdblpkey"];
+	
+	if (!tmp) {
+		[self setStatusString:NSLocalizedStringFromTableInBundle(
+			 @"Could not create query from searchfield input", 
+			 nil, 
+			 [NSBundle bundleForClass:[self class]],
+			 @"Error message when query can't be created")];
+	}
 	
 	return tmp;
 }
@@ -791,7 +810,7 @@ FMDatabase* db;
 // If your plugin needs to be configured you can return here a preference panel. 
 // Take a look at the example plugin on how to use this. Otherwise return nil.
 -(NSView*)preferenceView {
-	return nil; // [preferenceWindow contentView];
+	return [preferenceWindow contentView];
 }
 
 
@@ -958,15 +977,16 @@ FMDatabase* db;
 		goto cleanup;
 	}
 	
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		@"Calculating objects to retrieve...", 
+		nil, 
+		[NSBundle bundleForClass:[self class]],
+		@"Status message shown when plugin is fetching basic meta data for each token")];
+	
 	// needed to create sql queries
 	authortokens = [[NSMutableDictionary alloc] init];
 	searchtokens = tokens;
 	dbtokens = [self dbtokens:tokens];
-	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(
-		 @"Calculating objects to retrieve...", 
-		 nil, 
-		 [NSBundle bundleForClass:[self class]], @"")];
 	
 	// Set up the SQLite DB where we are going to store the retrieved papers
 	[self setupDatabase];
