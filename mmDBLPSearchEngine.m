@@ -60,9 +60,9 @@ FMDatabase* db;
 	// Now create a new db
 	db = [FMDatabase databaseWithPath:@"/tmp/PapersPluginDBLPTempQueryResult.db"];
 	if (![db open]) {
-		// TODO: Correct error handling
-		//NSLog(@"Could not open db.");
+		[self cancelSearch];
 	}
+	[db setLogsErrors:NO];
 }
 
 // create tables for each token, authors and abstracts/bibtex
@@ -71,11 +71,46 @@ FMDatabase* db;
 	for (NSString* i in dbtokens) {
 		for (NSString* j in [dbtokens objectForKey:i]) {
 			if ([j hasPrefix:@"ANDkeyword"] || [j hasPrefix:@"ORkeyword"] || [j hasPrefix:@"NOTkeyword"]) {
-				[db executeUpdate:[NSString stringWithFormat:@"create table %@ (dblpkey text primary key, conference text, doi text, ee text, isbn text, month integer, number integer, pages text, publisher text, series text, source text, title text, type text, volume integer, year integer)", j]];
+				[db executeUpdate:[NSString stringWithFormat:
+				@"create table %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@)", j, 
+								   @"dblpkey text primary key", 
+								   @"conference text", 
+								   @"doi text", 
+								   @"ee text", 
+								   @"isbn text", 
+								   @"month text", 
+								   @"number text", 
+								   @"pages text", 
+								   @"publisher text", 
+								   @"series text", 
+								   @"source text", 
+								   @"title text", 
+								   @"type text", 
+								   @"volume text", 
+								   @"year text"]];
 			} else if ([j hasPrefix:@"ANDauthor"] || [j hasPrefix:@"ORauthor"] || [j hasPrefix:@"NOTauthor"]) {
-				[db executeUpdate:[NSString stringWithFormat:@"create table %@ (dblpkey text primary key, title text, year integer, conference text, author text, type text, ee text, source text)", j]];
+				[db executeUpdate:[NSString stringWithFormat:
+				@"create table %@ (%@, %@, %@, %@, %@, %@, %@, %@)", j,  
+								   @"dblpkey text primary key", 
+								   @"title text", 
+								   @"year text", 
+								   @"conference text", 
+								   @"author text", 
+								   @"type text", 
+								   @"ee text", 
+								   @"source text"]];
 			} else if ([j hasPrefix:@"ANDdblpkey"] || [j hasPrefix:@"ORdblpkey"] || [j hasPrefix:@"NOTdblpkey"]) {
-				[db executeUpdate:[NSString stringWithFormat:@"create table %@ (dblpkey text primary key, title text, year integer, conference text, abstract text, type text, ee text, source text, bibtex text)", j]];
+				[db executeUpdate:[NSString stringWithFormat:
+				@"create table %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@)", j, 
+								   @"dblpkey text primary key", 
+								   @"title text", 
+								   @"year text", 
+								   @"conference text", 
+								   @"abstract text", 
+								   @"type text", 
+								   @"ee text", 
+								   @"source text", 
+								   @"bibtex text"]];
 			}
 		}
 	}
@@ -109,27 +144,40 @@ FMDatabase* db;
 				NSEnumerator *e = [result objectEnumerator];
 				id d;
 				while ((d = [e nextObject])) {
-					[db executeUpdate:[NSString stringWithFormat:@"insert into %@ (dblpkey, conference, doi, ee, isbn, month, number, pages, publisher, series, source, title, type, volume, year) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", j],
-					 [d objectForKey:@"dblp_key"],
-					 [d objectForKey:@"conference"],
-					 [d objectForKey:@"doi"],
-					 [d objectForKey:@"ee"],
-					 [d objectForKey:@"isbn"],
-					 [d objectForKey:@"month"],
-					 [d objectForKey:@"number"],
-					 [d objectForKey:@"pages"],
-					 [d objectForKey:@"publisher"],
-					 [d objectForKey:@"series"],
-					 [d objectForKey:@"source"],
-					 [d objectForKey:@"title"],
-					 [d objectForKey:@"type"],
-					 [d objectForKey:@"volume"],
-					 [d objectForKey:@"year"]
+					[db executeUpdate:[NSString stringWithFormat:
+					@"insert into %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@) %@", j,
+									   @"dblpkey", 
+									   @"conference", 
+									   @"doi", 
+									   @"ee", 
+									   @"isbn", 
+									   @"month", 
+									   @"number", 
+									   @"pages", 
+									   @"publisher", 
+									   @"series", 
+									   @"source", 
+									   @"title", 
+									   @"type", 
+									   @"volume", 
+									   @"year", 
+						@" values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"],
+									 [d objectForKey:@"dblp_key"],
+									 [d objectForKey:@"conference"],
+									 [d objectForKey:@"doi"],
+									 [d objectForKey:@"ee"],
+									 [d objectForKey:@"isbn"],
+									 [d objectForKey:@"month"],
+									 [d objectForKey:@"number"],
+									 [d objectForKey:@"pages"],
+									 [d objectForKey:@"publisher"],
+									 [d objectForKey:@"series"],
+									 [d objectForKey:@"source"],
+									 [d objectForKey:@"title"],
+									 [d objectForKey:@"type"],
+									 [d objectForKey:@"volume"],
+									 [d objectForKey:@"year"]
 					 ];
-					
-					if ([db hadError]) {
-						//NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
-					}
 				}
 				[db commit];
 				[ws release];
@@ -152,20 +200,26 @@ FMDatabase* db;
 				NSEnumerator *e = [result objectEnumerator];
 				id d;
 				while ((d = [e nextObject])) {
-					[db executeUpdate:[NSString stringWithFormat:@"insert into %@ (dblpkey, title, year, conference, author, type, ee, source) values (?, ?, ?, ?, ?, ?, ?, ?)", j],
-					 [d objectForKey:@"dblp_key"],
-					 [d objectForKey:@"title"],
-					 [d objectForKey:@"year"],
-					 [d objectForKey:@"conference"],
-					 [d objectForKey:@"author"],
-					 [d objectForKey:@"type"],
-					 [d objectForKey:@"ee"],
-					 [d objectForKey:@"source"]
+					[db executeUpdate:[NSString stringWithFormat:
+					@"insert into %@ (%@, %@, %@, %@, %@, %@, %@, %@) %@", j, 
+									   @"dblpkey", 
+									   @"title", 
+									   @"year", 
+									   @"conference", 
+									   @"author", 
+									   @"type", 
+									   @"ee", 
+									   @"source", 
+						@" values (?, ?, ?, ?, ?, ?, ?, ?)"],
+									 [d objectForKey:@"dblp_key"],
+									 [d objectForKey:@"title"],
+									 [d objectForKey:@"year"],
+									 [d objectForKey:@"conference"],
+									 [d objectForKey:@"author"],
+									 [d objectForKey:@"type"],
+									 [d objectForKey:@"ee"],
+									 [d objectForKey:@"source"]
 					 ];
-					
-					if ([db hadError]) {
-						//NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
-					}
 				}
 				[db commit];
 				[ws release];
@@ -178,20 +232,27 @@ FMDatabase* db;
 				NSEnumerator *e = [result objectEnumerator];
 				id d;
 				while ((d = [e nextObject])) {
-					[db executeUpdate:[NSString stringWithFormat:@"insert into %@ (dblpkey, title, year, conference, abstract, type, ee, source, bibtex) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", j],
-					 [d objectForKey:@"dblp_key"],
-					 [d objectForKey:@"title"],
-					 [d objectForKey:@"year"],
-					 [d objectForKey:@"conference"],
-					 [d objectForKey:@"abstract"],
-					 [d objectForKey:@"type"],
-					 [d objectForKey:@"ee"],
-					 [d objectForKey:@"source"]
+					[db executeUpdate:[NSString stringWithFormat:
+					@"insert into %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@) %@", j, 
+									   @"dblpkey",
+									   @"title", 
+									   @"year", 
+									   @"conference", 
+									   @"abstract", 
+									   @"type", 
+									   @"ee", 
+									   @"source", 
+									   @"bibtex", 
+						@"values (?, ?, ?, ?, ?, ?, ?, ?, ?)"],
+									 [d objectForKey:@"dblp_key"],
+									 [d objectForKey:@"title"],
+									 [d objectForKey:@"year"],
+									 [d objectForKey:@"conference"],
+									 [d objectForKey:@"abstract"],
+									 [d objectForKey:@"type"],
+									 [d objectForKey:@"ee"],
+									 [d objectForKey:@"source"]
 					 ];
-					
-					if ([db hadError]) {
-						//NSLog(@"-- Err %d: %@", [db lastErrorCode], [db lastErrorMessage]);
-					}
 				}
 				[db commit];
 				[ws release];
@@ -881,8 +942,16 @@ FMDatabase* db;
 	id <PapersSearchPluginDelegate> del = [self delegate];
 	[del didBeginSearch:self];
 	// TODO: ping DBLP server 
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Connecting with DBLP...", nil,[NSBundle bundleForClass:[self class]], @"Status message shown when plugin is connecting to the service")];
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Connected to DBLP...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when the plugin has succesfully connected to the service")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		 @"Connecting with DBLP...", 
+		 nil, 
+		 [NSBundle bundleForClass:[self class]], 
+		 @"Status message shown when plugin is connecting to the service")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		 @"Connected to DBLP...", 
+		 nil, 
+		 [NSBundle bundleForClass:[self class]], 
+		 @"Status message shown when the plugin has succesfully connected to the service")];
 	
 	// check whether we have been cancelled
 	if (!shouldContinueSearch) {
@@ -894,7 +963,10 @@ FMDatabase* db;
 	searchtokens = tokens;
 	dbtokens = [self dbtokens:tokens];
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Calculating objects to retrieve...", nil, [NSBundle bundleForClass:[self class]], @"")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		 @"Calculating objects to retrieve...", 
+		 nil, 
+		 [NSBundle bundleForClass:[self class]], @"")];
 	
 	// Set up the SQLite DB where we are going to store the retrieved papers
 	[self setupDatabase];
@@ -930,7 +1002,11 @@ FMDatabase* db;
 	
 	// Check whether we got anything at all
 	if (papers_total == 0) {
-		[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+		[self setStatusString:NSLocalizedStringFromTableInBundle(
+			@"No Papers found.", 
+			nil, 
+			[NSBundle bundleForClass:[self class]], 
+			@"Status message shown when no results were found for the query")];
 		goto cleanup;	
 	}
 	
@@ -944,7 +1020,12 @@ FMDatabase* db;
 		[self setItemsToRetrieve:[NSNumber numberWithInteger:papers_total]];
 		
 		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(
+									@"Fetching Paper %d of %d...", 
+									nil, 
+									[NSBundle bundleForClass:[self class]], 
+									@"Status message shown while fetching the metadata for the specified papers"), 
+							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 	}
 	
 	// check whether we have been cancelled
@@ -974,7 +1055,12 @@ FMDatabase* db;
 		[self setItemsToRetrieve:[NSNumber numberWithInt:[[self itemsFound] intValue]-[[self retrievedItems] intValue]]];
 		
 		// update status
-		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(@"Fetching Paper %d of %d...", nil, [NSBundle bundleForClass:[self class]], @"Status message shown while fetching the metadata for the specified papers"), [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
+		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(
+									@"Fetching Paper %d of %d...", 
+									nil, 
+									[NSBundle bundleForClass:[self class]], 
+									@"Status message shown while fetching the metadata for the specified papers"), 
+							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 		
 		
 		// check whether we have been cancelled
@@ -1029,7 +1115,9 @@ FMDatabase* db;
 				goto cleanup;	
 			}
 			
-			[db executeUpdate:@"insert into authors (dblpkey, fullname, firstnames, lastname, initials) values (?, ?, ?, ?, ?)",
+			[db executeUpdate:[NSString stringWithFormat:
+							   @"insert into authors (%@) values (?, ?, ?, ?, ?)", 
+							   @"dblpkey, fullname, firstnames, lastname, initials"],
 			 [author objectForKey:@"dblp_key"],
 			 [author objectForKey:@"author"],
 			 [NSString stringWithFormat:@"%@", firstNames],
@@ -1129,7 +1217,9 @@ FMDatabase* db;
 		
 		// authors
 		NSMutableArray *authors = [NSMutableArray arrayWithCapacity:100];
-		FMResultSet *rs_authors = [db executeQuery:@"select * from authors where dblpkey = ? order by lastname, firstnames;", [rs stringForColumn:@"dblpkey"], nil];
+		FMResultSet *rs_authors = [db executeQuery:
+								   @"select * from authors where dblpkey = ? order by lastname, firstnames;", 
+								   [rs stringForColumn:@"dblpkey"], nil];
 		while ([rs_authors next]) {
 			NSMutableDictionary *author = [NSMutableDictionary dictionaryWithCapacity:50];
 			[author setValue:[rs_authors stringForColumn:@"firstnames"] forKey:@"firstName"];
@@ -1159,8 +1249,12 @@ FMDatabase* db;
 			[paper setValue:journals forKey:@"journal"];
 		
 		// abstract and bibtex
-		[paper setValue:[db stringForQuery:@"select abstract from abstracts where dblpkey = ?", [rs stringForColumn:@"dblpkey"], nil] forKey:@"abstract"];
-		[paper setValue:[db stringForQuery:@"select bibtex from abstracts where dblpkey = ?", [rs stringForColumn:@"dblpkey"], nil] forKey:@"bibtex"];
+		[paper setValue:[db stringForQuery:
+						 @"select abstract from abstracts where dblpkey = ?", 
+						 [rs stringForColumn:@"dblpkey"], nil] forKey:@"abstract"];
+		[paper setValue:[db stringForQuery:
+						 @"select bibtex from abstracts where dblpkey = ?", 
+						 [rs stringForColumn:@"dblpkey"], nil] forKey:@"bibtex"];
 		
 		// check whether we have been cancelled
 		if (!shouldContinueSearch) {
@@ -1193,7 +1287,11 @@ FMDatabase* db;
 		
 		// Check whether we got anything at all
 		if ([papers count] == 0) {
-			[self setStatusString:NSLocalizedStringFromTableInBundle(@"No Papers found.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown when no results were found for the query")];
+			[self setStatusString:NSLocalizedStringFromTableInBundle(
+				 @"No Papers found.", 
+				 nil, 
+				 [NSBundle bundleForClass:[self class]], 
+				 @"Status message shown when no results were found for the query")];
 			goto cleanup;	
 		}
 		
@@ -1206,7 +1304,11 @@ FMDatabase* db;
 	
 cleanup:
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(@"Done.", nil, [NSBundle bundleForClass:[self class]], @"Status message shown after all metadata has been retrieved")];
+	[self setStatusString:NSLocalizedStringFromTableInBundle(
+		 @"Done.", 
+		 nil, 
+		 [NSBundle bundleForClass:[self class]], 
+		 @"Status message shown after all metadata has been retrieved")];
 	
 	// done, let the delegate know
 	del = [self delegate];
@@ -1228,10 +1330,10 @@ cleanup:
 	// respective query methods
 	shouldContinueSearch = NO;
 	[self setStatusString:NSLocalizedStringFromTableInBundle(
-															 @"Cancelling search...", 
-															 nil, 
-															 [NSBundle bundleForClass:[self class]], 
-															 @"Status message shown while cancelling search.")];
+		 @"Cancelling search...", 
+		 nil, 
+		 [NSBundle bundleForClass:[self class]], 
+		 @"Status message shown while cancelling search.")];
 }
 
 

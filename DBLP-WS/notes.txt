@@ -1,3 +1,7 @@
-WSMakeStubs -url http://dblp.l3s.de/WS/dblp++.php?wsdl -x ObjC -name DBLP
+basic shell command to create this ObjC classes for the WSDL file:
+$ WSMakeStubs -url http://dblp.l3s.de/WS/dblp++.php?wsdl -x ObjC -name DBLP
 
+important: change the "return ..." in every class
+
+something more to read:
 http://en.wikibooks.org/wiki/Programming:WebObjects/Web_Services/Web_Service_Provider
