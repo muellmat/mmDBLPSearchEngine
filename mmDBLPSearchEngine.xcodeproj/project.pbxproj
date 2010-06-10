@@ -11,6 +11,7 @@
 		3971D44811C1154D00FF02EB /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3971D44711C1154D00FF02EB /* LICENSE.txt */; };
 		3971D44B11C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */; };
 		3971D44C11C1158700FF02EB /* CONTRIBUTORS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3971D44A11C1158700FF02EB /* CONTRIBUTORS.txt */; };
+		3971D49311C1253800FF02EB /* TODO.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3971D49211C1253800FF02EB /* TODO.txt */; };
 		3993A06411B98A1800DB4D96 /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3993A05E11B98A1800DB4D96 /* FMDatabase.h */; };
 		3993A06511B98A1800DB4D96 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3993A05F11B98A1800DB4D96 /* FMDatabase.m */; };
 		3993A06611B98A1800DB4D96 /* FMDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3993A06011B98A1800DB4D96 /* FMDatabaseAdditions.h */; };
@@ -54,6 +55,7 @@
 		3971D44711C1154D00FF02EB /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES_AND_TODO_LIST.txt; sourceTree = "<group>"; };
 		3971D44A11C1158700FF02EB /* CONTRIBUTORS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONTRIBUTORS.txt; sourceTree = "<group>"; };
+		3971D49211C1253800FF02EB /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 		3993A05E11B98A1800DB4D96 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		3993A05F11B98A1800DB4D96 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
 		3993A06011B98A1800DB4D96 /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
@@ -125,6 +127,7 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				3971D49211C1253800FF02EB /* TODO.txt */,
 				399ACDA911A54C6600D7A73F /* Strings */,
 				399ACDA211A54C0C00D7A73F /* Images */,
 				399ACDA411A54C4D00D7A73F /* Panel.xib */,
@@ -317,6 +320,7 @@
 				3971D44811C1154D00FF02EB /* LICENSE.txt in Resources */,
 				3971D44B11C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt in Resources */,
 				3971D44C11C1158700FF02EB /* CONTRIBUTORS.txt in Resources */,
+				3971D49311C1253800FF02EB /* TODO.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

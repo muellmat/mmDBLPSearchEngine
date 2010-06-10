@@ -1,12 +1,9 @@
 TODO
 
-- code refactoring
 - l10n
 - parse acm, ... to get the paper directly (-> helper functions)
-- implement token matching
 - implement correct error handling
 - remove compiler warnings in wsgeneratedobj.m / dblp.m
-- remove doubles (?) (figure out why there are doubles!)
 - add nifty logo
 
 - API for researchr.org
