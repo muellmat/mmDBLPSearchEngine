@@ -1035,7 +1035,7 @@ FMDatabase* db;
 		
 		// update status
 		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(
-									@"Fetching Paper %d of %d...", 
+									@"Fetching paper %d of %d...", 
 									nil, 
 									[NSBundle bundleForClass:[self class]], 
 									@"Status message shown while fetching the metadata for the specified papers"), 
@@ -1070,7 +1070,7 @@ FMDatabase* db;
 		
 		// update status
 		[self setStatusString:[NSString stringWithFormat:NSLocalizedStringFromTableInBundle(
-									@"Fetching Paper %d of %d...", 
+									@"Fetching paper %d of %d...", 
 									nil, 
 									[NSBundle bundleForClass:[self class]], 
 									@"Status message shown while fetching the metadata for the specified papers"), 
