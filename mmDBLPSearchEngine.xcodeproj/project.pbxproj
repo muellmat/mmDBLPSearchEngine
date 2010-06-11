@@ -51,6 +51,8 @@
 		089C167EFE841241C02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		089C167FFE841241C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		08FB77B6FE84183AC02AAC07 /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		390CB39511C252B50036FEB3 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/Panel.xib; sourceTree = "<group>"; };
+		390CB39D11C252FE0036FEB3 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
 		3971D44711C1154D00FF02EB /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES_AND_TODO_LIST.txt; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				399ACDA511A54C4D00D7A73F /* English */,
+				390CB39511C252B50036FEB3 /* German */,
 			);
 			name = Panel.xib;
 			sourceTree = "<group>";
@@ -364,6 +367,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				A60804F30C722EFD0021CB27 /* English */,
+				390CB39D11C252FE0036FEB3 /* German */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";

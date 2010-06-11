@@ -977,12 +977,6 @@ FMDatabase* db;
 		goto cleanup;
 	}
 	
-	[self setStatusString:NSLocalizedStringFromTableInBundle(
-		@"Calculating objects to retrieve...", 
-		nil, 
-		[NSBundle bundleForClass:[self class]],
-		@"Status message shown when plugin is fetching basic meta data for each token")];
-	
 	// needed to create sql queries
 	authortokens = [[NSMutableDictionary alloc] init];
 	searchtokens = tokens;
