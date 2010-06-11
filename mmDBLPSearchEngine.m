@@ -810,7 +810,7 @@ FMDatabase* db;
 // If your plugin needs to be configured you can return here a preference panel. 
 // Take a look at the example plugin on how to use this. Otherwise return nil.
 -(NSView*)preferenceView {
-	return [preferenceWindow contentView];
+	return nil; //[preferenceWindow contentView];
 }
 
 

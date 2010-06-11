@@ -54,6 +54,7 @@
 		390CB39511C252B50036FEB3 /* German */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = German; path = German.lproj/Panel.xib; sourceTree = "<group>"; };
 		390CB39D11C252FE0036FEB3 /* German */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
 		390CB3A611C254FE0036FEB3 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
+		390CB3B011C2562B0036FEB3 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Spanish; path = Spanish.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
 		3971D44711C1154D00FF02EB /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES_AND_TODO_LIST.txt; sourceTree = "<group>"; };
@@ -290,6 +291,13 @@
 			buildConfigurationList = A65AD4FA09A4AE9B0061BB58 /* Build configuration list for PBXProject "mmDBLPSearchEngine" */;
 			compatibilityVersion = "Xcode 3.0";
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				Spanish,
+			);
 			mainGroup = 089C166AFE841209C02AAC07 /* ORF Marker */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -370,6 +378,7 @@
 				A60804F30C722EFD0021CB27 /* English */,
 				390CB39D11C252FE0036FEB3 /* German */,
 				390CB3A611C254FE0036FEB3 /* French */,
+				390CB3B011C2562B0036FEB3 /* Spanish */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
