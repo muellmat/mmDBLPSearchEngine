@@ -472,15 +472,19 @@ FMDatabase* db;
 	
 	
 	
+	
+	
+	NSString *sqlANDOR;
+	
 	if (count == 0) {
-		return sqlAND;
+		sqlANDOR = sqlAND;
 	}
 	
 	if (count == 1 && [sqlAND isEqualToString:@""]) {
 		for (NSString* i in dbtokens) {
 			for (NSString* j in [dbtokens objectForKey:i]) {
 				if ([j hasPrefix:@"OR"]) {
-					return [NSString stringWithFormat:@"select * from %@ ", j];
+					sqlANDOR = [NSString stringWithFormat:@"select * from %@ ", j];
 				}
 			}
 		}
@@ -488,7 +492,7 @@ FMDatabase* db;
 		for (NSString* i in dbtokens) {
 			for (NSString* j in [dbtokens objectForKey:i]) {
 				if ([j hasPrefix:@"OR"]) {
-					return [NSString stringWithFormat:@"%@ union select * from %@ ", sqlAND, j];
+					sqlANDOR = [NSString stringWithFormat:@"%@ union select * from %@ ", sqlAND, j];
 				}
 			}
 		}
@@ -502,7 +506,7 @@ FMDatabase* db;
 				if ([j hasPrefix:@"OR"] && first) {
 					[or appendFormat:@"select * from %@ ", j];
 					first = NO;
-				} else if ([j hasPrefix:@"OR"] && first) {
+				} else if ([j hasPrefix:@"OR"] && !first) {
 					[or appendFormat:@"union select * from %@ ", j];
 				}
 			}
@@ -517,7 +521,55 @@ FMDatabase* db;
 				}
 			}
 		}
-		return [NSString stringWithFormat:@"%@ %@", sqlAND, or];
+		sqlANDOR = [NSString stringWithFormat:@"%@ %@", sqlAND, or];
+	}
+	
+	
+	
+	
+	NSString *sqlNOT;
+	
+	int count_not = 0;
+	for (NSString* i in dbtokens) {
+		for (NSString* j in [dbtokens objectForKey:i]) {
+			if ([j hasPrefix:@"NOT"]) {
+				count_not += 1;
+			}
+		}
+	}
+	
+	
+	
+	if (count_not == 0 && ![sqlANDOR isEqualToString:@""]) {
+		return sqlANDOR;
+	}
+	
+	if (count_not == 1 && ![sqlANDOR isEqualToString:@""]) {
+		for (NSString* i in dbtokens) {
+			for (NSString* j in [dbtokens objectForKey:i]) {
+				if ([j hasPrefix:@"NOT"]) {
+					sqlNOT = [NSString stringWithFormat:@" where dblpkey not in (select dblpkey from %@)", j];
+					return [NSString stringWithFormat:@"select * from (%@) %@", sqlANDOR, sqlNOT];
+				}
+			}
+		}
+	}
+	
+	if (count_not > 1 && ![sqlANDOR isEqualToString:@""]) {
+		BOOL first = YES;
+		NSMutableString *not = [NSMutableString stringWithString:@""];
+		for (NSString* i in dbtokens) {
+			for (NSString* j in [dbtokens objectForKey:i]) {
+				if ([j hasPrefix:@"NOT"] && first) {
+					[not appendFormat:@"select * from %@ ", j];
+					first = NO;
+				} else if ([j hasPrefix:@"NOT"] && !first) {
+					[not appendFormat:@"union select * from %@ ", j];
+				}
+			}
+		}
+		sqlNOT = [NSString stringWithFormat:@" where dblpkey not in (select distinct dblpkey from (%@))", not];
+		return [NSString stringWithFormat:@"select * from (%@) %@", sqlANDOR, sqlNOT];
 	}
 	
 	return @"";
