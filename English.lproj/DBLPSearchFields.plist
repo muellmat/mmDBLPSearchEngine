@@ -24,8 +24,6 @@
 		<string>[PG]</string>
 		<key>Year</key>
 		<string>[YR]</string>
-		<key>Month</key>
-		<string>[MN]</string>
 		<key>DBLP Key</key>
 		<string>[DK]</string>
 	</dict>
@@ -44,7 +42,6 @@
 		<string>Volume</string>
 		<string>Pages</string>
 		<string>Year</string>
-		<string>Month</string>
 		<string>SPACER</string>
 		<string>DBLP Key</string>
 	</array>

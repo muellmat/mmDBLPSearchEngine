@@ -32,11 +32,14 @@ NSArray *searchtokens;
 NSDictionary *dbtokens;
 NSMutableDictionary *authortokens;
 FMDatabase* db;
+NSNumber *startYear;
+NSNumber *endYear;
 
 -(void)setupDatabase;
 -(void)createTables;
 -(void)fetchDataForTokens;
--(NSDictionary*)dbtokens:(NSArray*)tokens;
+-(void)yearFromTokes;
+-(NSDictionary*)tokensForDB;
 -(NSString*)sqlforAND;
 -(NSString*)sqlforTokens;
 
@@ -119,6 +122,45 @@ FMDatabase* db;
 	[db commit];
 }
 
+// If keyword [YR] is specified, use it to reduce results.
+-(void)yearFromTokes {
+	int min = 0;
+	int max = 0;
+	int current = 0;
+	BOOL first = YES;
+	
+	NSEnumerator *e = [searchtokens objectEnumerator];
+	id token;
+	while (token = [e nextObject]) {
+		if ([@"[YR]" isEqualToString:[token valueForKey:@"code"]]) {
+			current = [[token valueForKey:@"token"] intValue];
+			
+			if (first) {
+				first = NO;
+				min = current;
+				max = current;
+			}
+			
+			if (current < min)
+				min = current;
+			
+			if (current > max)
+				max = current;
+		}
+	}
+	
+	
+	// stupid workaround for soapservice:all_publications_author_year
+	if (min == 0)
+		min = 1;
+	if (max == 0)
+		max = 9999;
+	
+	
+	startYear = [NSNumber numberWithInt:min];
+	endYear   = [NSNumber numberWithInt:max];
+}
+
 // fetch meta data for each token
 -(void)fetchDataForTokens {
 	[self setStatusString:NSLocalizedStringFromTableInBundle(
@@ -146,8 +188,8 @@ FMDatabase* db;
 			if ([j hasPrefix:@"ANDkeyword"] || [j hasPrefix:@"ORkeyword"] || [j hasPrefix:@"NOTkeyword"]) {
 				all_publications_keywords_year* ws = [[all_publications_keywords_year alloc] init];
 				[ws setParameters:[[dbtokens objectForKey:i] objectForKey:j] 
-					 in_startYear:[NSNumber numberWithInteger:0] 
-					   in_endYear:[NSNumber numberWithInteger:0] 
+					 in_startYear:startYear 
+					   in_endYear:endYear 
 						 in_limit:[NSNumber numberWithInteger:1000]]; // hard-coded limit to 1000! use prefkey instead!!!
 				NSDictionary *result = [ws resultValue];
 				results += [result count];
@@ -192,18 +234,18 @@ FMDatabase* db;
 				}
 				[db commit];
 				[ws release];
-			} else if ([j hasPrefix:@"ANDauthor"] || [j hasPrefix:@"ORauthor"] || [j hasPrefix:@"NOTauthor"]) {
+			} else if ([j hasPrefix:@"ANDauthor"] || [j hasPrefix:@"ORauthor"] || [j hasPrefix:@"NOTauthor"]) {				
 				all_publications_author_year* ws = [[all_publications_author_year alloc] init];
 				if ([@"AUG" isEqualToString:[authortokens objectForKey:[[dbtokens objectForKey:i] objectForKey:j]]]) {
 					[ws setParameters:[[dbtokens objectForKey:i] objectForKey:j] 
 						in_familyName:@"" 
-						 in_startYear:[NSNumber numberWithInteger:1] 
-						   in_endYear:[NSNumber numberWithInteger:9999]];
+						 in_startYear:startYear 
+						   in_endYear:endYear];
 				} else {
 					[ws setParameters:@"" 
 						in_familyName:[[dbtokens objectForKey:i] objectForKey:j] 
-						 in_startYear:[NSNumber numberWithInteger:1] 
-						   in_endYear:[NSNumber numberWithInteger:9999]];
+						 in_startYear:startYear 
+						   in_endYear:endYear];
 				}
 				NSDictionary *result = [ws resultValue];
 				results += [result count];
@@ -273,7 +315,7 @@ FMDatabase* db;
 }
 
 // filter search tokens; needed to create the tables
--(NSDictionary*)dbtokens:(NSArray*)tokens {
+-(NSDictionary*)tokensForDB {
 	NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
 	
 	NSMutableDictionary *ANDkeyword = [[NSMutableDictionary alloc] init];
@@ -300,14 +342,14 @@ FMDatabase* db;
 	int iORdblpkey  = 0;
 	int iNOTdblpkey = 0;
 	
-	NSEnumerator *e = [tokens objectEnumerator];
+	NSEnumerator *e = [searchtokens objectEnumerator];
 	id token;
 	while (token = [e nextObject]) {
 		if ([@"[ALL]"  isEqualToString:[token valueForKey:@"code"]] ||
 			[@"[TI]"   isEqualToString:[token valueForKey:@"code"]] ||
 			[@"[TIAB]" isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[YR]"   isEqualToString:[token valueForKey:@"code"]]) {
+			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]]/* ||
+			[@"[YR]"   isEqualToString:[token valueForKey:@"code"]]*/) {
 			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
 				[ANDkeyword setObject:[token valueForKey:@"token"] 
 							   forKey:[NSString stringWithFormat:@"ANDkeyword%d", iANDkeyword]];
@@ -1032,7 +1074,10 @@ FMDatabase* db;
 	// needed to create sql queries
 	authortokens = [[NSMutableDictionary alloc] init];
 	searchtokens = tokens;
-	dbtokens = [self dbtokens:tokens];
+	dbtokens = [self tokensForDB];
+	
+	// if keyword [YR] is specified, use it to reduce the result set
+	[self yearFromTokes];
 	
 	// Set up the SQLite DB where we are going to store the retrieved papers
 	[self setupDatabase];
