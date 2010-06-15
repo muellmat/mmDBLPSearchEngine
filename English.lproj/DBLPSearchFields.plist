@@ -16,12 +16,6 @@
 		<string>[AUG]</string>
 		<key>Author (Family Name)</key>
 		<string>[AUF]</string>
-		<key>Journal</key>
-		<string>[TA]</string>
-		<key>Volume</key>
-		<string>[VI]</string>
-		<key>Pages</key>
-		<string>[PG]</string>
 		<key>Year</key>
 		<string>[YR]</string>
 		<key>DBLP Key</key>
@@ -38,9 +32,6 @@
 		<string>Author (Given Name)</string>
 		<string>Author (Family Name)</string>
 		<string>SPACER</string>
-		<string>Journal</string>
-		<string>Volume</string>
-		<string>Pages</string>
 		<string>Year</string>
 		<string>SPACER</string>
 		<string>DBLP Key</string>

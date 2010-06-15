@@ -1,50 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
-	<key>Language</key>
-	<dict>
-		<key>Chinese</key>
-		<string>chinese[la]</string>
-		<key>Dutch</key>
-		<string>dutch[la]</string>
-		<key>English</key>
-		<string>english[la]</string>
-		<key>French</key>
-		<string>french[la]</string>
-		<key>German</key>
-		<string>german[la]</string>
-		<key>Italian</key>
-		<string>italian[la]</string>
-		<key>Japanese</key>
-		<string>japanese[la]</string>
-		<key>Portuguese</key>
-		<string>portuguese[la]</string>
-		<key>Russian</key>
-		<string>russian[la]</string>
-		<key>Spanish</key>
-		<string>spanish[la]</string>
-	</dict>
-	<key>Publication Type</key>
-	<dict>
-		<key>Ahead of Print</key>
-		<string>pubstatusaheadofprint</string>
-		<key>Clinical Trial</key>
-		<string>clinical trial[pt]</string>
-		<key>Editorial</key>
-		<string>editorial[pt]</string>
-		<key>Journal Article</key>
-		<string>journal article[pt]</string>
-		<key>Letter</key>
-		<string>letter[pt]</string>
-		<key>Meta-Analysis</key>
-		<string>meta-analysis[pt]</string>
-		<key>Practice Guideline</key>
-		<string>practise guideline[pt]</string>
-		<key>Randomized Controlled Trial</key>
-		<string>randomized controlled trial[pt]</string>
-		<key>Review</key>
-		<string>review[pt]</string>
-	</dict>
-</dict>
+<dict/>
 </plist>

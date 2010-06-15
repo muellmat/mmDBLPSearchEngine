@@ -76,7 +76,7 @@ NSNumber *endYear;
 			if ([j hasPrefix:@"ANDkeyword"] || [j hasPrefix:@"ORkeyword"] || [j hasPrefix:@"NOTkeyword"]) {
 				[db executeUpdate:[NSString stringWithFormat:
 				@"create table %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@)", j, 
-								   @"dblpkey text primary key", 
+								   @"dblpkey text", 
 								   @"conference text", 
 								   @"doi text", 
 								   @"ee text", 
@@ -94,7 +94,7 @@ NSNumber *endYear;
 			} else if ([j hasPrefix:@"ANDauthor"] || [j hasPrefix:@"ORauthor"] || [j hasPrefix:@"NOTauthor"]) {
 				[db executeUpdate:[NSString stringWithFormat:
 				@"create table %@ (%@, %@, %@, %@, %@, %@, %@, %@)", j,  
-								   @"dblpkey text primary key", 
+								   @"dblpkey text", 
 								   @"title text", 
 								   @"year text", 
 								   @"conference text", 
@@ -105,7 +105,7 @@ NSNumber *endYear;
 			} else if ([j hasPrefix:@"ANDdblpkey"] || [j hasPrefix:@"ORdblpkey"] || [j hasPrefix:@"NOTdblpkey"]) {
 				[db executeUpdate:[NSString stringWithFormat:
 				@"create table %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@)", j, 
-								   @"dblpkey text primary key", 
+								   @"dblpkey text", 
 								   @"title text", 
 								   @"year text", 
 								   @"conference text", 
