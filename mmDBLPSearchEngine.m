@@ -322,9 +322,9 @@ NSNumber *endYear;
 	NSMutableDictionary *ORkeyword  = [[NSMutableDictionary alloc] init];
 	NSMutableDictionary *NOTkeyword = [[NSMutableDictionary alloc] init];
 	
-	NSMutableDictionary *ANDauthor = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *ORauthor  = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *NOTauthor = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *ANDauthor  = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *ORauthor   = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *NOTauthor  = [[NSMutableDictionary alloc] init];
 	
 	NSMutableDictionary *ANDdblpkey = [[NSMutableDictionary alloc] init];
 	NSMutableDictionary *ORdblpkey  = [[NSMutableDictionary alloc] init];
@@ -334,9 +334,9 @@ NSNumber *endYear;
 	int iORkeyword  = 0;
 	int iNOTkeyword = 0;
 	
-	int iANDauthor = 0;
-	int iORauthor  = 0;
-	int iNOTauthor = 0;
+	int iANDauthor  = 0;
+	int iORauthor   = 0;
+	int iNOTauthor  = 0;
 	
 	int iANDdblpkey = 0;
 	int iORdblpkey  = 0;
@@ -348,8 +348,7 @@ NSNumber *endYear;
 		if ([@"[ALL]"  isEqualToString:[token valueForKey:@"code"]] ||
 			[@"[TI]"   isEqualToString:[token valueForKey:@"code"]] ||
 			[@"[TIAB]" isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]]/* ||
-			[@"[YR]"   isEqualToString:[token valueForKey:@"code"]]*/) {
+			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]]) {
 			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
 				[ANDkeyword setObject:[token valueForKey:@"token"] 
 							   forKey:[NSString stringWithFormat:@"ANDkeyword%d", iANDkeyword]];
@@ -401,7 +400,7 @@ NSNumber *endYear;
 				[NOTdblpkey setObject:[token valueForKey:@"token"] 
 							   forKey:[NSString stringWithFormat:@"NOTdblpkey%d", iNOTdblpkey]];
 				iNOTdblpkey += 1;
-			}		
+			}
 		}
 	}
 	
@@ -820,10 +819,10 @@ NSNumber *endYear;
 // keep the name rather short.
 -(NSString*)name {
 	return NSLocalizedStringFromTableInBundle(
-											  @"DBLP", 
-											  nil, 
-											  [NSBundle bundleForClass:[self class]], 
-											  @"Localized name of the service");
+			  @"DBLP", 
+			  nil, 
+			  [NSBundle bundleForClass:[self class]], 
+			  @"Localized name of the service");
 }
 
 // Allows to return a color for your plugin, here blue for DBLP. NOTE: In the 
@@ -1079,6 +1078,11 @@ NSNumber *endYear;
 	// if keyword [YR] is specified, use it to reduce the result set
 	[self yearFromTokes];
 	
+	// check whether we have been cancelled
+	if (!shouldContinueSearch) {
+		goto cleanup;
+	}
+	
 	// Set up the SQLite DB where we are going to store the retrieved papers
 	[self setupDatabase];
 	
@@ -1126,7 +1130,6 @@ NSNumber *endYear;
 		[self setItemsFound:[NSNumber numberWithInteger:papers_total]];
 		[del didFindResults:self];
 		
-		
 		[self setRetrievedItems:[NSNumber numberWithInt:0]];
 		[self setItemsToRetrieve:[NSNumber numberWithInteger:papers_total]];
 		
@@ -1157,7 +1160,6 @@ NSNumber *endYear;
 		NSMutableArray *papers = [NSMutableArray arrayWithCapacity:1];
 		NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
 		
-		
 		// increment counter
 		papers_retrieved += 1;
 		
@@ -1179,8 +1181,7 @@ NSNumber *endYear;
 			goto cleanup;
 		}
 		
-		
-		
+		// ---------------------------------------------------------------------
 		// Fetch authors
 		NSDictionary *authors_result = nil;
 		publication_authors* ws1 = [[publication_authors alloc] init];
@@ -1244,8 +1245,7 @@ NSNumber *endYear;
 			goto cleanup;	
 		}
 		
-		
-		
+		// ---------------------------------------------------------------------
 		// Fetch abstract/bibtex
 		NSDictionary *abstract = nil;
 		publication_data2* ws2 = [[publication_data2 alloc] init];
@@ -1283,7 +1283,9 @@ NSNumber *endYear;
 		
 		
 		
-		// we got all meta data now --> let's compose the meta data to a paper dictionary
+		// ---------------------------------------------------------------------
+		// we got all meta data now --> let's compose the meta data to 
+		//                              a paper dictionary
 		
 		// doi
 		[paper setValue:[rs stringForColumn:@"doi"] forKey:@"doi"];
@@ -1391,6 +1393,9 @@ NSNumber *endYear;
 			[papers addObject:paper];
 		}
 		
+		
+		
+		// ---------------------------------------------------------------------
 		// let's display the paper now
 		
 		// Hand them to the delegate
@@ -1413,6 +1418,10 @@ NSNumber *endYear;
 	}
 	[rs close];
 	
+	
+	
+	
+	
 cleanup:
 	
 	[self setStatusString:NSLocalizedStringFromTableInBundle(
@@ -1427,8 +1436,15 @@ cleanup:
 	
 	isSearching = NO;
 	
+	
+	
 	// cleanup dblp stuff
 	[db close];
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	[fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
+	[fileManager release];
+	
+	
 	
 	// cleanup nicely
 	[pool release];
@@ -1499,7 +1515,7 @@ cleanup:
 // Return articles that cite a particular paper in the same way you return 
 // search results. You will be passed the id as you set it during the search.
 // NOTE: This method runs in a separate thread. Signal your progress to the delegate.
--(void)getCitedByArticlesForID:(NSString*)identifier{
+-(void)getCitedByArticlesForID:(NSString*)identifier {
 	
 }
 
@@ -1615,14 +1631,14 @@ cleanup:
 	return [NSURL new];
 }
 
-// Return the URL to the PDF ofthe paper. You will be passed the ID as you set 
+// Return the URL to the PDF of the paper. You will be passed the ID as you set 
 // it during the search. Return nil if impossible to resolve. IMPORTANT: If you 
 // return nil Papers will do its best to automatically retrieve the PDF on the 
 // basis of the publisherURLForID as returned above. ONLY return a link for a 
 // PDF here if a) you are sure you know the location 
 //          or b) you think you can do some fancy lookup 
 //                that outperforms Papers build in attempts.
-- (NSURL*)pdfURLForID: (NSString *)identifier {
+- (NSURL*)pdfURLForID:(NSString*)identifier {
 	return [NSURL new];
 }
 
@@ -1663,7 +1679,7 @@ cleanup:
 //
 // NOTE: This method runs in a separate thread. Signal your progress to the 
 // delegate. Use the search protocols delegate methods.
--(void) performMatchWithQuery:(NSArray*)tokens {
+-(void)performMatchWithQuery:(NSArray*)tokens {
 	
 }
 
@@ -1674,7 +1690,7 @@ cleanup:
 // or nil if the identifier cannot be resolved. NOTE: This method runs in a 
 // separate thread. Signal your progress to the delegate. Use the above 
 // delegate methods.
--(void) performMatchForID:(NSString*)identifier {
+-(void)performMatchForID:(NSString*)identifier {
 	
 }
 
@@ -1691,7 +1707,7 @@ cleanup:
 // ignore the results if you return more than 1 hit. NOTE: This method runs in 
 // a separate thread. Signal your progress to the delegate. Use the above 
 // delegate methods.
--(void) performAutoMatchForPaper:(NSDictionary*)paper {
+-(void)performAutoMatchForPaper:(NSDictionary*)paper {
 	
 }
 
