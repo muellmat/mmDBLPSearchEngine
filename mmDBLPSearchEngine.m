@@ -1044,13 +1044,12 @@ NSNumber *endYear;
 	// Are we already searching?
 	if (isSearching) {
 		// Warning: CHECK WHAT HAPPENS IF CALLED AGAIN, AND CANCEL PREVIOUS ONE
+		[self cancelSearch];
 	}
 	// Now we are
-	
-	
+	isSearching = YES;
 	
 	// Inform delegate we're about to start
-	
 	id <PapersSearchPluginDelegate> del = [self delegate];
 	[del didBeginSearch:self];
 	// TODO: ping DBLP server 
@@ -1439,7 +1438,9 @@ cleanup:
 	
 	
 	// cleanup dblp stuff
-	[db close];
+	if (db)
+		[db close];
+	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	[fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
 	[fileManager release];
