@@ -35,11 +35,12 @@ FMDatabase* db;
 NSNumber *startYear;
 NSNumber *endYear;
 
+-(BOOL)verifyTokens;
+-(NSDictionary*)tokensForDB;
+-(void)yearFromTokes;
 -(void)setupDatabase;
 -(void)createTables;
 -(void)fetchDataForTokens;
--(void)yearFromTokes;
--(NSDictionary*)tokensForDB;
 -(NSString*)sqlforAND;
 -(NSString*)sqlforTokens;
 
@@ -51,7 +52,197 @@ NSNumber *endYear;
 
 @implementation mmDBLPSearchEngine (dblp_methods)
 
-// create a database where we temporarily store the search results
+// Verify the given tokens. Returns YES if everything is fine.
+-(BOOL)verifyTokens {
+	// can't search when only [YR] keywords are given
+	
+	int total = 0;
+	int yr = 0;
+	NSEnumerator *e = [searchtokens objectEnumerator];
+	id token;
+	while (token = [e nextObject]) {
+		total += 1;
+		if ([@"[YR]" isEqualToString:[token valueForKey:@"code"]]) {
+			yr += 1;
+		}
+	}
+	
+	if (total == yr) {
+		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+		[userInfo setObject:NSLocalizedStringFromTableInBundle(
+							   @"Could not create query from searchfield input.", 
+							   nil, 
+							   [NSBundle bundleForClass:[self class]], 
+							   @"Error message when query can't be created") 
+					 forKey:NSLocalizedDescriptionKey];
+		[userInfo setObject:NSLocalizedStringFromTableInBundle(
+							   @"Please ensure you have created a proper query.", 
+							   nil, 
+							   [NSBundle bundleForClass:[self class]], 
+							   @"Recovery suggestion when query can't be created") 
+					 forKey:NSLocalizedRecoverySuggestionErrorKey];		
+		[self setSearchError:[NSError errorWithDomain:@"DBLPSearchController" 
+												 code:1 
+											 userInfo:userInfo]];
+		return NO;
+	}
+	
+	return YES;
+}
+
+// Filter search tokens; needed to create the tables.
+-(NSDictionary*)tokensForDB {
+	NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
+	
+	NSMutableDictionary *ANDkeyword = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *ORkeyword  = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *NOTkeyword = [[NSMutableDictionary alloc] init];
+	
+	NSMutableDictionary *ANDauthor  = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *ORauthor   = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *NOTauthor  = [[NSMutableDictionary alloc] init];
+	
+	NSMutableDictionary *ANDdblpkey = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *ORdblpkey  = [[NSMutableDictionary alloc] init];
+	NSMutableDictionary *NOTdblpkey = [[NSMutableDictionary alloc] init];
+	
+	int iANDkeyword = 0;
+	int iORkeyword  = 0;
+	int iNOTkeyword = 0;
+	
+	int iANDauthor  = 0;
+	int iORauthor   = 0;
+	int iNOTauthor  = 0;
+	
+	int iANDdblpkey = 0;
+	int iORdblpkey  = 0;
+	int iNOTdblpkey = 0;
+	
+	NSEnumerator *e = [searchtokens objectEnumerator];
+	id token;
+	while (token = [e nextObject]) {
+		if ([@"[ALL]"  isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[TI]"   isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[TIAB]" isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]]) {
+			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[ANDkeyword setObject:[token valueForKey:@"token"] 
+							   forKey:[NSString stringWithFormat:@"ANDkeyword%d", iANDkeyword]];
+				iANDkeyword += 1;
+			} else if ([@"OR" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[ORkeyword setObject:[token valueForKey:@"token"] 
+							  forKey:[NSString stringWithFormat:@"ORkeyword%d", iORkeyword]];
+				iORkeyword += 1;
+			} else if ([@"NOT" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[NOTkeyword setObject:[token valueForKey:@"token"] 
+							   forKey:[NSString stringWithFormat:@"NOTkeyword%d", iNOTkeyword]];
+				iNOTkeyword += 1;
+			}
+		}
+		
+		if ([@"[AUF]" isEqualToString:[token valueForKey:@"code"]] ||
+			[@"[AUG]" isEqualToString:[token valueForKey:@"code"]]) {
+			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[ANDauthor setObject:[token valueForKey:@"token"] 
+							  forKey:[NSString stringWithFormat:@"ANDauthor%d", iANDauthor]];
+				iANDauthor += 1;
+				[authortokens setObject:[token valueForKey:@"code"] 
+								 forKey:[NSString stringWithFormat:@"ANDauthor%d", iANDauthor]];
+			} else if ([@"OR" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[ORauthor setObject:[token valueForKey:@"token"] 
+							 forKey:[NSString stringWithFormat:@"ORauthor%d", iORauthor]];
+				iORauthor += 1;
+				[authortokens setObject:[token valueForKey:@"code"] 
+								 forKey:[NSString stringWithFormat:@"ORauthor%d", iANDauthor]];
+			} else if ([@"NOT" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[NOTauthor setObject:[token valueForKey:@"token"] 
+							  forKey:[NSString stringWithFormat:@"NOTauthor%d", iNOTauthor]];
+				iNOTauthor += 1;
+				[authortokens setObject:[token valueForKey:@"code"] 
+								 forKey:[NSString stringWithFormat:@"NOTauthor%d", iANDauthor]];
+			}
+		}
+		
+		if ([@"[DK]" isEqualToString:[token valueForKey:@"code"]]) {
+			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[ANDdblpkey setObject:[token valueForKey:@"token"] 
+							   forKey:[NSString stringWithFormat:@"ANDdblpkey%d", iANDdblpkey]];
+				iANDdblpkey += 1;
+			} else if ([@"OR" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[ORdblpkey setObject:[token valueForKey:@"token"] 
+							  forKey:[NSString stringWithFormat:@"ORdblpkey%d", iORdblpkey]];
+				iORdblpkey += 1;
+			} else if ([@"NOT" isEqualToString:[token valueForKey:@"operatorCode"]]) {
+				[NOTdblpkey setObject:[token valueForKey:@"token"] 
+							   forKey:[NSString stringWithFormat:@"NOTdblpkey%d", iNOTdblpkey]];
+				iNOTdblpkey += 1;
+			}
+		}
+	}
+	
+	[tmp setObject:ANDkeyword forKey:@"ANDkeyword"];
+	[tmp setObject:ORkeyword forKey:@"ORkeyword"];
+	[tmp setObject:NOTkeyword forKey:@"NOTkeyword"];
+	
+	[tmp setObject:ANDauthor forKey:@"ANDauthor"];
+	[tmp setObject:ORauthor forKey:@"ORauthor"];
+	[tmp setObject:NOTauthor forKey:@"NOTauthor"];
+	
+	[tmp setObject:ANDdblpkey forKey:@"ANDdblpkey"];
+	[tmp setObject:ORdblpkey forKey:@"ORdblpkey"];
+	[tmp setObject:NOTdblpkey forKey:@"NOTdblpkey"];
+	
+	if (!tmp) {
+		[self setStatusString:NSLocalizedStringFromTableInBundle(
+			 @"Could not create query from searchfield input.", 
+			 nil, 
+			 [NSBundle bundleForClass:[self class]],
+			 @"Error message when query can't be created")];
+	}
+	
+	return tmp;
+}
+
+// If keyword [YR] is specified, use it to reduce results.
+-(void)yearFromTokes {
+	int min = 0;
+	int max = 0;
+	int current = 0;
+	BOOL first = YES;
+	
+	NSEnumerator *e = [searchtokens objectEnumerator];
+	id token;
+	while (token = [e nextObject]) {
+		if ([@"[YR]" isEqualToString:[token valueForKey:@"code"]]) {
+			current = [[token valueForKey:@"token"] intValue];
+			
+			if (first) {
+				first = NO;
+				min = current;
+				max = current;
+			}
+			
+			if (current < min)
+				min = current;
+			
+			if (current > max)
+				max = current;
+		}
+	}
+	
+	
+	// stupid workaround for soapservice:all_publications_author_year
+	if (min == 0)
+		min = 1;
+	if (max == 0)
+		max = 9999;
+	
+	
+	startYear = [NSNumber numberWithInt:min];
+	endYear   = [NSNumber numberWithInt:max];
+}
+
+// Create a database where we temporarily store the search results.
 -(void)setupDatabase {
 	// Create a SQLite DB in /tmp where we can store our query results
 	
@@ -68,7 +259,7 @@ NSNumber *endYear;
 	[db setLogsErrors:NO];
 }
 
-// create tables for each token, authors and abstracts/bibtex
+// Create tables for each token, authors and abstracts/bibtex.
 -(void)createTables {
 	[db beginTransaction];
 	for (NSString* i in dbtokens) {
@@ -122,46 +313,7 @@ NSNumber *endYear;
 	[db commit];
 }
 
-// If keyword [YR] is specified, use it to reduce results.
--(void)yearFromTokes {
-	int min = 0;
-	int max = 0;
-	int current = 0;
-	BOOL first = YES;
-	
-	NSEnumerator *e = [searchtokens objectEnumerator];
-	id token;
-	while (token = [e nextObject]) {
-		if ([@"[YR]" isEqualToString:[token valueForKey:@"code"]]) {
-			current = [[token valueForKey:@"token"] intValue];
-			
-			if (first) {
-				first = NO;
-				min = current;
-				max = current;
-			}
-			
-			if (current < min)
-				min = current;
-			
-			if (current > max)
-				max = current;
-		}
-	}
-	
-	
-	// stupid workaround for soapservice:all_publications_author_year
-	if (min == 0)
-		min = 1;
-	if (max == 0)
-		max = 9999;
-	
-	
-	startYear = [NSNumber numberWithInt:min];
-	endYear   = [NSNumber numberWithInt:max];
-}
-
-// fetch meta data for each token
+// Fetch meta data for each token.
 -(void)fetchDataForTokens {
 	[self setStatusString:NSLocalizedStringFromTableInBundle(
 		 @"Fetching metadata...", 
@@ -192,6 +344,14 @@ NSNumber *endYear;
 					   in_endYear:endYear 
 						 in_limit:[NSNumber numberWithInteger:1000]]; // hard-coded limit to 1000! use prefkey instead!!!
 				NSDictionary *result = [ws resultValue];
+				/*if ([ws isComplete] && [ws isFault]) {
+					if ([@"/CFStreamFault" isEqualToString:[[ws getResultDictionary] valueForKey:@"/FaultString"]]) {
+						NSLog(@"foo");s
+					}
+					
+					NSLog(@"error: %@", [[ws getResultDictionary] valueForKey:@"/FaultString"]);
+				}
+				*/
 				results += [result count];
 				[db beginTransaction];
 				NSEnumerator *e = [result objectEnumerator];
@@ -314,120 +474,7 @@ NSNumber *endYear;
 	}
 }
 
-// filter search tokens; needed to create the tables
--(NSDictionary*)tokensForDB {
-	NSMutableDictionary *tmp = [[NSMutableDictionary alloc] init];
-	
-	NSMutableDictionary *ANDkeyword = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *ORkeyword  = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *NOTkeyword = [[NSMutableDictionary alloc] init];
-	
-	NSMutableDictionary *ANDauthor  = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *ORauthor   = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *NOTauthor  = [[NSMutableDictionary alloc] init];
-	
-	NSMutableDictionary *ANDdblpkey = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *ORdblpkey  = [[NSMutableDictionary alloc] init];
-	NSMutableDictionary *NOTdblpkey = [[NSMutableDictionary alloc] init];
-	
-	int iANDkeyword = 0;
-	int iORkeyword  = 0;
-	int iNOTkeyword = 0;
-	
-	int iANDauthor  = 0;
-	int iORauthor   = 0;
-	int iNOTauthor  = 0;
-	
-	int iANDdblpkey = 0;
-	int iORdblpkey  = 0;
-	int iNOTdblpkey = 0;
-	
-	NSEnumerator *e = [searchtokens objectEnumerator];
-	id token;
-	while (token = [e nextObject]) {
-		if ([@"[ALL]"  isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[TI]"   isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[TIAB]" isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[AU]"   isEqualToString:[token valueForKey:@"code"]]) {
-			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[ANDkeyword setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"ANDkeyword%d", iANDkeyword]];
-				iANDkeyword += 1;
-			} else if ([@"OR" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[ORkeyword setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"ORkeyword%d", iORkeyword]];
-				iORkeyword += 1;
-			} else if ([@"NOT" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[NOTkeyword setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"NOTkeyword%d", iNOTkeyword]];
-				iNOTkeyword += 1;
-			}
-		}
-		
-		if ([@"[AUF]" isEqualToString:[token valueForKey:@"code"]] ||
-			[@"[AUG]" isEqualToString:[token valueForKey:@"code"]]) {
-			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[ANDauthor setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"ANDauthor%d", iANDauthor]];
-				iANDauthor += 1;
-				[authortokens setObject:[token valueForKey:@"code"] 
-								 forKey:[NSString stringWithFormat:@"ANDauthor%d", iANDauthor]];
-			} else if ([@"OR" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[ORauthor setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"ORauthor%d", iORauthor]];
-				iORauthor += 1;
-				[authortokens setObject:[token valueForKey:@"code"] 
-								 forKey:[NSString stringWithFormat:@"ORauthor%d", iANDauthor]];
-			} else if ([@"NOT" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[NOTauthor setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"NOTauthor%d", iNOTauthor]];
-				iNOTauthor += 1;
-				[authortokens setObject:[token valueForKey:@"code"] 
-								 forKey:[NSString stringWithFormat:@"NOTauthor%d", iANDauthor]];
-			}
-		}
-		
-		if ([@"[DK]" isEqualToString:[token valueForKey:@"code"]]) {
-			if ([@"AND" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[ANDdblpkey setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"ANDdblpkey%d", iANDdblpkey]];
-				iANDdblpkey += 1;
-			} else if ([@"OR" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[ORdblpkey setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"ORdblpkey%d", iORdblpkey]];
-				iORdblpkey += 1;
-			} else if ([@"NOT" isEqualToString:[token valueForKey:@"operatorCode"]]) {
-				[NOTdblpkey setObject:[token valueForKey:@"token"] 
-							   forKey:[NSString stringWithFormat:@"NOTdblpkey%d", iNOTdblpkey]];
-				iNOTdblpkey += 1;
-			}
-		}
-	}
-	
-	[tmp setObject:ANDkeyword forKey:@"ANDkeyword"];
-	[tmp setObject:ORkeyword forKey:@"ORkeyword"];
-	[tmp setObject:NOTkeyword forKey:@"NOTkeyword"];
-	
-	[tmp setObject:ANDauthor forKey:@"ANDauthor"];
-	[tmp setObject:ORauthor forKey:@"ORauthor"];
-	[tmp setObject:NOTauthor forKey:@"NOTauthor"];
-	
-	[tmp setObject:ANDdblpkey forKey:@"ANDdblpkey"];
-	[tmp setObject:ORdblpkey forKey:@"ORdblpkey"];
-	[tmp setObject:NOTdblpkey forKey:@"NOTdblpkey"];
-	
-	if (!tmp) {
-		[self setStatusString:NSLocalizedStringFromTableInBundle(
-			 @"Could not create query from searchfield input", 
-			 nil, 
-			 [NSBundle bundleForClass:[self class]],
-			 @"Error message when query can't be created")];
-	}
-	
-	return tmp;
-}
-
-// compose SQL code fragment (using INNER JOIN) for AND-tokens
+// Compose SQL code fragment (using INNER JOIN) for AND-tokens.
 -(NSString*)sqlforAND {
 	int count = 0;
 	for (NSString* i in dbtokens) {
@@ -475,7 +522,7 @@ NSNumber *endYear;
 	return @"";
 }
 
-// compose the final SQL query
+// Compose the final SQL query.
 -(NSString*)sqlforTokens {
 	int count_and = 0;
 	NSString *first_table;
@@ -1052,12 +1099,43 @@ NSNumber *endYear;
 	// Inform delegate we're about to start
 	id <PapersSearchPluginDelegate> del = [self delegate];
 	[del didBeginSearch:self];
-	// TODO: ping DBLP server 
+	
+	// needed to create sql queries
+	authortokens = [[NSMutableDictionary alloc] init];
+	searchtokens = tokens;
+	dbtokens = [self tokensForDB];
+	
+	// verify tokens
+	if (![self verifyTokens]) {
+		goto cleanup;
+	}
+	
+	// test connection
 	[self setStatusString:NSLocalizedStringFromTableInBundle(
 		 @"Connecting with DBLP...", 
 		 nil, 
 		 [NSBundle bundleForClass:[self class]], 
 		 @"Status message shown when plugin is connecting to the service")];
+	if (system("ping -c 2 dblp.l3s.de")) {
+		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
+		[userInfo setObject:NSLocalizedStringFromTableInBundle(
+						   @"Service Temporarily Unavailable.", 
+						   nil, 
+						   [NSBundle bundleForClass:[self class]], 
+						   @"Error message indicating that the service is currently not available") 
+					 forKey:NSLocalizedDescriptionKey];
+		[userInfo setObject:NSLocalizedStringFromTableInBundle(
+						   @"Please try again later.", 
+						   nil, 
+						   [NSBundle bundleForClass:[self class]], 
+						   @"Recovery suggestion indicating to try the previous operation again at a later time") 
+					 forKey:NSLocalizedRecoverySuggestionErrorKey];		
+		[self setSearchError:[NSError errorWithDomain:@"DBLPSearchController" 
+												 code:1 
+											 userInfo:userInfo]];
+		goto cleanup;
+	}
+	// if there is no error, everything is fine
 	[self setStatusString:NSLocalizedStringFromTableInBundle(
 		 @"Connected to DBLP...", 
 		 nil, 
@@ -1068,11 +1146,6 @@ NSNumber *endYear;
 	if (!shouldContinueSearch) {
 		goto cleanup;
 	}
-	
-	// needed to create sql queries
-	authortokens = [[NSMutableDictionary alloc] init];
-	searchtokens = tokens;
-	dbtokens = [self tokensForDB];
 	
 	// if keyword [YR] is specified, use it to reduce the result set
 	[self yearFromTokes];
@@ -1444,7 +1517,7 @@ cleanup:
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	[fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
 	[fileManager release];
-	
+
 	
 	
 	// cleanup nicely

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		393C6C5911CA436800608499 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393C6C5811CA436800608499 /* SystemConfiguration.framework */; };
 		3949D4FC11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */; };
 		3971D44811C1154D00FF02EB /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3971D44711C1154D00FF02EB /* LICENSE.txt */; };
 		3971D44B11C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */; };
@@ -56,6 +57,7 @@
 		390CB3A611C254FE0036FEB3 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		390CB3B011C2562B0036FEB3 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Spanish; path = Spanish.lproj/Localizable.strings; sourceTree = "<group>"; };
 		390CB3BE11C25ABF0036FEB3 /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/Localizable.strings; sourceTree = "<group>"; };
+		393C6C5811CA436800608499 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
 		3971D44711C1154D00FF02EB /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES_AND_TODO_LIST.txt; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			files = (
 				A61AB3440B658CDC0027D08B /* Cocoa.framework in Frameworks */,
 				3993A07311B98AF400DB4D96 /* libsqlite3.dylib in Frameworks */,
+				393C6C5911CA436800608499 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,6 +167,7 @@
 		1058C7AEFEA557BF11CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				393C6C5811CA436800608499 /* SystemConfiguration.framework */,
 				089C1672FE841209C02AAC07 /* Foundation.framework */,
 				089C167FFE841241C02AAC07 /* AppKit.framework */,
 				3993A07211B98AF400DB4D96 /* libsqlite3.dylib */,
