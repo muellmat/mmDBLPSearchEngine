@@ -58,9 +58,8 @@ NSNumber *endYear;
 	
 	int total = 0;
 	int yr = 0;
-	NSEnumerator *e = [searchtokens objectEnumerator];
-	id token;
-	while (token = [e nextObject]) {
+	
+	for (id token in [searchtokens objectEnumerator]) {
 		total += 1;
 		if ([@"[YR]" isEqualToString:[token valueForKey:@"code"]]) {
 			yr += 1;
@@ -118,9 +117,7 @@ NSNumber *endYear;
 	int iORdblpkey  = 0;
 	int iNOTdblpkey = 0;
 	
-	NSEnumerator *e = [searchtokens objectEnumerator];
-	id token;
-	while (token = [e nextObject]) {
+	for (id token in [searchtokens objectEnumerator]) {
 		if ([@"[ALL]"  isEqualToString:[token valueForKey:@"code"]] ||
 			[@"[TI]"   isEqualToString:[token valueForKey:@"code"]] ||
 			[@"[TIAB]" isEqualToString:[token valueForKey:@"code"]] ||
@@ -210,9 +207,7 @@ NSNumber *endYear;
 	int current = 0;
 	BOOL first = YES;
 	
-	NSEnumerator *e = [searchtokens objectEnumerator];
-	id token;
-	while (token = [e nextObject]) {
+	for (id token in [searchtokens objectEnumerator]) {
 		if ([@"[YR]" isEqualToString:[token valueForKey:@"code"]]) {
 			current = [[token valueForKey:@"token"] intValue];
 			
@@ -323,7 +318,6 @@ NSNumber *endYear;
 	
 	int retrieved = 0;
 	int total = [searchtokens count];
-	int results = 0;
 	
 	for (NSString* i in dbtokens) {
 		for (NSString* j in [dbtokens objectForKey:i]) {
@@ -343,20 +337,8 @@ NSNumber *endYear;
 					 in_startYear:startYear 
 					   in_endYear:endYear 
 						 in_limit:[NSNumber numberWithInteger:1000]]; // hard-coded limit to 1000! use prefkey instead!!!
-				NSDictionary *result = [ws resultValue];
-				/*if ([ws isComplete] && [ws isFault]) {
-					if ([@"/CFStreamFault" isEqualToString:[[ws getResultDictionary] valueForKey:@"/FaultString"]]) {
-						NSLog(@"foo");s
-					}
-					
-					NSLog(@"error: %@", [[ws getResultDictionary] valueForKey:@"/FaultString"]);
-				}
-				*/
-				results += [result count];
 				[db beginTransaction];
-				NSEnumerator *e = [result objectEnumerator];
-				id d;
-				while ((d = [e nextObject])) {
+				for (id d in [[ws resultValue] objectEnumerator]) {
 					[db executeUpdate:[NSString stringWithFormat:
 					@"insert into %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@, %@) %@", j,
 									   @"dblpkey", 
@@ -407,12 +389,8 @@ NSNumber *endYear;
 						 in_startYear:startYear 
 						   in_endYear:endYear];
 				}
-				NSDictionary *result = [ws resultValue];
-				results += [result count];
 				[db beginTransaction];
-				NSEnumerator *e = [result objectEnumerator];
-				id d;
-				while ((d = [e nextObject])) {
+				for (id d in [[ws resultValue] objectEnumerator]) {
 					[db executeUpdate:[NSString stringWithFormat:
 					@"insert into %@ (%@, %@, %@, %@, %@, %@, %@, %@) %@", j, 
 									   @"dblpkey", 
@@ -439,12 +417,8 @@ NSNumber *endYear;
 			} else if ([j hasPrefix:@"ANDdblpkey"] || [j hasPrefix:@"ORdblpkey"] || [j hasPrefix:@"NOTdblpkey"]) {
 				publication_data2* ws = [[publication_data2 alloc] init];
 				[ws setParameters:[[dbtokens objectForKey:i] objectForKey:j]];
-				NSDictionary *result = [ws resultValue];
-				results += [result count];
 				[db beginTransaction];
-				NSEnumerator *e = [result objectEnumerator];
-				id d;
-				while ((d = [e nextObject])) {
+				for (id d in [[ws resultValue] objectEnumerator]) {
 					[db executeUpdate:[NSString stringWithFormat:
 					@"insert into %@ (%@, %@, %@, %@, %@, %@, %@, %@, %@) %@", j, 
 									   @"dblpkey",
@@ -1091,7 +1065,7 @@ NSNumber *endYear;
 	// Are we already searching?
 	if (isSearching) {
 		// Warning: CHECK WHAT HAPPENS IF CALLED AGAIN, AND CANCEL PREVIOUS ONE
-		[self cancelSearch];
+		goto isAlreadySearching;
 	}
 	// Now we are
 	isSearching = YES;
@@ -1102,7 +1076,7 @@ NSNumber *endYear;
 	
 	// needed to create sql queries
 	authortokens = [[NSMutableDictionary alloc] init];
-	searchtokens = tokens;
+	searchtokens = tokens; // do not release!
 	dbtokens = [self tokensForDB];
 	
 	// verify tokens
@@ -1219,16 +1193,9 @@ NSNumber *endYear;
 		goto cleanup;
 	}
 	
-	
-	
 	// now we have data for all tokens, let's get additional meta data for each one...
 	FMResultSet *rs = [db executeQuery:sql, nil];
 	while ([rs next]) {
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {
-			goto cleanup;
-		}
-		
 		NSMutableArray *papers = [NSMutableArray arrayWithCapacity:1];
 		NSMutableDictionary *paper = [NSMutableDictionary dictionaryWithCapacity:50];
 		
@@ -1247,34 +1214,14 @@ NSNumber *endYear;
 									@"Status message shown while fetching the metadata for the specified papers"), 
 							   [[self retrievedItems] integerValue], [[self itemsFound] integerValue]]];
 		
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {
-			goto cleanup;
-		}
-		
 		// ---------------------------------------------------------------------
 		// Fetch authors
-		NSDictionary *authors_result = nil;
 		publication_authors* ws1 = [[publication_authors alloc] init];
 		[ws1 setParameters:[rs stringForColumn:@"dblpkey"]];
-		authors_result = [ws1 resultValue];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {	
-			goto cleanup;	
-		}
 		
 		// save the result in the db
 		[db beginTransaction];
-		NSEnumerator *e_authors = [authors_result objectEnumerator];
-		NSDictionary *author;
-		while ((author = [e_authors nextObject])) {
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
+		for (NSDictionary *author in [[ws1 resultValue] objectEnumerator]) {
 			// split author's fullname into parts
 			NSCharacterSet *whitespace = [NSCharacterSet whitespaceCharacterSet];
 			NSArray *parts = [[author objectForKey:@"author"] componentsSeparatedByCharactersInSet:whitespace];
@@ -1293,12 +1240,6 @@ NSNumber *endYear;
 				}
 				lastName = [parts objectAtIndex:last];
 			}
-			
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
 			[db executeUpdate:[NSString stringWithFormat:
 							   @"insert into authors (%@) values (?, ?, ?, ?, ?)", 
 							   @"dblpkey, fullname, firstnames, lastname, initials"],
@@ -1312,33 +1253,14 @@ NSNumber *endYear;
 		[db commit];
 		[ws1 release];
 		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {	
-			goto cleanup;	
-		}
-		
 		// ---------------------------------------------------------------------
 		// Fetch abstract/bibtex
-		NSDictionary *abstract = nil;
 		publication_data2* ws2 = [[publication_data2 alloc] init];
 		[ws2 setParameters:[rs stringForColumn:@"dblpkey"]];
-		abstract = [ws2 resultValue];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {	
-			goto cleanup;	
-		}
 		
 		// save the result in the db
 		[db beginTransaction];
-		NSEnumerator *e_abstract = [abstract objectEnumerator];
-		NSDictionary *item;
-		while ((item = [e_abstract nextObject])) {
-			// check whether we have been cancelled
-			if (!shouldContinueSearch) {	
-				goto cleanup;	
-			}
-			
+		for (NSDictionary *item in [[ws2 resultValue] objectEnumerator]) {
 			[db executeUpdate:@"insert into abstracts (dblpkey, abstract, bibtex) values (?, ?, ?)",
 			 [item objectForKey:@"dblp_key"],
 			 [item objectForKey:@"abstract"],
@@ -1347,13 +1269,6 @@ NSNumber *endYear;
 		}
 		[db commit];
 		[ws2 release];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {	
-			goto cleanup;	
-		}
-		
-		
 		
 		// ---------------------------------------------------------------------
 		// we got all meta data now --> let's compose the meta data to 
@@ -1375,6 +1290,8 @@ NSNumber *endYear;
 			if ([regextest evaluateWithObject:[rs stringForColumn:@"ee"]] == YES) {
 				[paper setValue:[rs stringForColumn:@"ee"] forKey:@"path"];
 			}
+			//[regex release];
+			//[regextest release];
 		}
 		
 		// identifier (= dblp_key)
@@ -1395,11 +1312,6 @@ NSNumber *endYear;
 		// month
 		[paper setValue:[rs stringForColumn:@"month"] forKey:@"month"];
 		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {
-			goto cleanup;
-		}
-		
 		// authors
 		NSMutableArray *authors = [NSMutableArray arrayWithCapacity:100];
 		FMResultSet *rs_authors = [db executeQuery:
@@ -1416,11 +1328,6 @@ NSNumber *endYear;
 		[rs_authors close];
 		if ([authors count] > 0)
 			[paper setValue:authors forKey:@"authors"];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {
-			goto cleanup;
-		}
 		
 		// journals
 		NSMutableArray *journals = [NSMutableArray arrayWithCapacity:1];
@@ -1441,11 +1348,6 @@ NSNumber *endYear;
 						 @"select bibtex from abstracts where dblpkey = ?", 
 						 [rs stringForColumn:@"dblpkey"], nil] forKey:@"bibtex"];
 		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {
-			goto cleanup;
-		}
-		
 		// publicationTypes
 		NSMutableArray *publicationTypes = [NSMutableArray arrayWithCapacity:1];
 		NSMutableDictionary *publicationType = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -1454,11 +1356,6 @@ NSNumber *endYear;
 			[publicationTypes addObject:publicationType];
 		if ([publicationTypes count] > 0)
 			[paper setValue:publicationTypes forKey:@"publicationTypes"];
-		
-		// check whether we have been cancelled
-		if (!shouldContinueSearch) {
-			goto cleanup;
-		}
 		
 		// check paper before adding it
 		if (paper) {
@@ -1471,16 +1368,8 @@ NSNumber *endYear;
 		// let's display the paper now
 		
 		// Hand them to the delegate
-		[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
-		
-		// Check whether we got anything at all
-		if ([papers count] == 0) {
-			[self setStatusString:NSLocalizedStringFromTableInBundle(
-				 @"No Papers found.", 
-				 nil, 
-				 [NSBundle bundleForClass:[self class]], 
-				 @"Status message shown when no results were found for the query")];
-			goto cleanup;	
+		if ([papers count] > 0) {
+			[del didRetrieveObjects:[NSDictionary dictionaryWithObject:papers forKey:@"papers"]];
 		}
 		
 		// check whether we have been cancelled
@@ -1511,14 +1400,21 @@ cleanup:
 	
 	
 	// cleanup dblp stuff
-	if (db)
-		[db close];
+	// searchtokens: do not release!
 	
+	if ([db open])
+		[db close];
+	/*
+	[authortokens release];
+	[dbtokens release];
+	*/
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	[fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
 	[fileManager release];
-
 	
+	
+	
+isAlreadySearching:	
 	
 	// cleanup nicely
 	[pool release];
