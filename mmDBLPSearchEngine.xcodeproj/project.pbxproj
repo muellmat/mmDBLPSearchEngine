@@ -147,8 +147,8 @@
 			children = (
 				A65E40ED0C3BF8180058B6CC /* mmDBLPSearchEngine.h */,
 				A65E40EE0C3BF8180058B6CC /* mmDBLPSearchEngine.m */,
-				3993A05D11B98A1800DB4D96 /* FMDB */,
 				399ACDCE11A54E6500D7A73F /* DBLP-WS */,
+				3993A05D11B98A1800DB4D96 /* FMDB */,
 			);
 			name = Classes;
 			sourceTree = "<group>";

@@ -4,7 +4,6 @@ TODO
 - implement correct error handling
 - remove compiler warnings in wsgeneratedobj.m / dblp.m
 - translate keywords (-> how?)
-- add nifty logo
 
 - API for researchr.org
 - implement researchr plugin
