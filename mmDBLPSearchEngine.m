@@ -69,7 +69,7 @@ NSNumber *endYear;
 	if (total == yr) {
 		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
 		[userInfo setObject:NSLocalizedStringFromTableInBundle(
-							   @"Could not create query from searchfield input.", 
+							   @"Could not create query from search field input.", 
 							   nil, 
 							   [NSBundle bundleForClass:[self class]], 
 							   @"Error message when query can't be created") 
@@ -191,7 +191,7 @@ NSNumber *endYear;
 	
 	if (!tmp) {
 		[self setStatusString:NSLocalizedStringFromTableInBundle(
-			 @"Could not create query from searchfield input.", 
+			 @"Could not create query from search field input.", 
 			 nil, 
 			 [NSBundle bundleForClass:[self class]],
 			 @"Error message when query can't be created")];
@@ -955,7 +955,7 @@ NSNumber *endYear;
 	return cachedPredefinedSearchTerms;
 }
 
-// Return a dictionary of searchfield codes that show up as choices in the 
+// Return a dictionary of search field codes that show up as choices in the 
 // searchtokens the dictionary should contain an array under key "order" and a 
 // dictionary under the key "fields" containing key-value pairs where the key 
 // is the name of the field and the value a code that your plugin can translate 
@@ -1362,8 +1362,6 @@ NSNumber *endYear;
 			[papers addObject:paper];
 		}
 		
-		
-		
 		// ---------------------------------------------------------------------
 		// let's display the paper now
 		
@@ -1378,8 +1376,6 @@ NSNumber *endYear;
 		}
 	}
 	[rs close];
-	
-	
 	
 	
 	
@@ -1404,10 +1400,7 @@ cleanup:
 	
 	if ([db open])
 		[db close];
-	/*
-	[authortokens release];
-	[dbtokens release];
-	*/
+	
 	NSFileManager *fileManager = [NSFileManager defaultManager];
 	[fileManager removeFileAtPath:@"/tmp/PapersPluginDBLPTempQueryResult.db" handler:nil];
 	[fileManager release];
@@ -1418,6 +1411,7 @@ isAlreadySearching:
 	
 	// cleanup nicely
 	[pool release];
+	
 }
 
 // Informs us that we should stop searching. Since we're running in a thread we 

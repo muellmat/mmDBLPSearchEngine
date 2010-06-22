@@ -57,6 +57,7 @@
 		390CB3A611C254FE0036FEB3 /* French */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
 		390CB3B011C2562B0036FEB3 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Spanish; path = Spanish.lproj/Localizable.strings; sourceTree = "<group>"; };
 		390CB3BE11C25ABF0036FEB3 /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/Localizable.strings; sourceTree = "<group>"; };
+		39196F4811D14B0600CB24C0 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
 		393C6C5811CA436800608499 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
 		3971D44711C1154D00FF02EB /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
@@ -303,6 +304,7 @@
 				German,
 				Spanish,
 				pt_BR,
+				ru,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* ORF Marker */;
 			projectDirPath = "";
@@ -386,6 +388,7 @@
 				390CB3A611C254FE0036FEB3 /* French */,
 				390CB3B011C2562B0036FEB3 /* Spanish */,
 				390CB3BE11C25ABF0036FEB3 /* pt_BR */,
+				39196F4811D14B0600CB24C0 /* ru */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
