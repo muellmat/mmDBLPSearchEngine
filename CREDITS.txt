@@ -1,0 +1,55 @@
+
+
+
+	mmDBLPSearchEngine v1.0
+
+
+
+License:
+
+	- Creative Commons Non-commercial Attribution license.
+	
+		http://creativecommons.org/licenses/by-nc/1.0/
+
+
+
+Used source code:
+
+	- Papers Plugin SDK
+	
+		Copyright (c) 2007-2010 mekentosj
+		
+		http://mekentosj.com/
+		http://mekentosj.com/papers/
+		http://www.mekentosj.com/papers/plugins/papers_sdk.dmg
+	
+	- FMDB
+	
+		Copyright (c) 2008 Flying Meat Inc.
+		
+		http://flyingmeat.com/
+		http://gusmueller.com/blog/archives/2005/3/22.html
+		http://code.google.com/p/flycode/source/browse/trunk/fmdb
+
+
+
+Thanks to:
+
+	- The whole Database Systems Chair of Uni Tübingen:
+		http://www-db.informatik.uni-tuebingen.de/team
+	
+	- Gus Mueller for his SQLite/ObjC wrapper code
+	
+	- Viktoriya Lahres for correcting the Russian translation
+	
+	- mekentosj for this great application + SDK!
+
+
+
+Contact:
+
+	Matthias Müller <muellmat@informatik.uni-tuebingen.de>
+	
+	You found a bug? Got a great idea to improve the plugin? Drop me a mail!
+
+

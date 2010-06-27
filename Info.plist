@@ -31,7 +31,7 @@
 	<key>PapersMinimumAppVersion</key>
 	<string>1.5</string>
 	<key>PapersMinimumOSVersion</key>
-	<string>10.5</string>
+	<string>10.4</string>
 	<key>PapersPluginCategory</key>
 	<string>Database</string>
 	<key>PapersPluginDescription</key>
