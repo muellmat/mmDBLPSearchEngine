@@ -33,7 +33,7 @@
 	<key>PapersMinimumOSVersion</key>
 	<string>10.4</string>
 	<key>PapersPluginCategory</key>
-	<string>Database</string>
+	<string>Computer Science</string>
 	<key>PapersPluginDescription</key>
 	<string>Searches DBLP from within Papers</string>
 	<key>PapersPluginName</key>
