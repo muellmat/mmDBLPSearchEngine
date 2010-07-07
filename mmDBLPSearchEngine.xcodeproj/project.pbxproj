@@ -82,6 +82,7 @@
 		399ACE0111A5540300D7A73F /* searchengine.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = searchengine.icns; sourceTree = "<group>"; };
 		399ACE0211A5540300D7A73F /* statusbar_dblp.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = statusbar_dblp.tif; sourceTree = "<group>"; };
 		399ACE0311A5540300D7A73F /* toolstrip_dblp.tif */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = toolstrip_dblp.tif; sourceTree = "<group>"; };
+		39B8913411E52B5B00E3182D /* zh_CN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = zh_CN; path = zh_CN.lproj/Localizable.strings; sourceTree = "<group>"; };
 		39EE77E311A5491F00CEAE6A /* DBLPSearchEngine.searchengine */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DBLPSearchEngine.searchengine; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D5B49B7048680CD000E48DA /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A60804F30C722EFD0021CB27 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -303,6 +304,7 @@
 				Spanish,
 				pt_BR,
 				ru,
+				zh_CN,
 			);
 			mainGroup = 089C166AFE841209C02AAC07 /* ORF Marker */;
 			projectDirPath = "";
@@ -383,6 +385,7 @@
 				390CB3B011C2562B0036FEB3 /* Spanish */,
 				390CB3BE11C25ABF0036FEB3 /* pt_BR */,
 				39196F4811D14B0600CB24C0 /* ru */,
+				39B8913411E52B5B00E3182D /* zh_CN */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
