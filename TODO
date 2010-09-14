@@ -4,11 +4,9 @@ TODO
 - remove compiler warnings in wsgeneratedobj.m / dblp.m
 - translate keywords (-> how?)
 
-- API for researchr.org
-- implement researchr plugin
 
 
-IDEADS
+IDEADS for Papers
 
 - add a button "import referenced papers"
 - font size shortcut on german kbd layout (= vs +) and multitouch gestures
