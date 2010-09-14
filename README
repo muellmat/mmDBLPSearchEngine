@@ -1,0 +1,15 @@
+mmDBLPSearchEngine is a Search Engine Plugin for Papers.
+
+      Papers: http://mekentosj.com/papers/
+        DBLP: http://www.informatik.uni-trier.de/~ley/db/
+Faceted DBLP: http://dblp.l3s.de/
+
+
+
+Installation:
+
+$ git clone git://github.com/muellmat/mmDBLPSearchEngine.git
+$ cd mmDBLPSearchEngine
+$ xcodebuild -configuration 'Development + Install'
+
+Now (re)start Papers...
