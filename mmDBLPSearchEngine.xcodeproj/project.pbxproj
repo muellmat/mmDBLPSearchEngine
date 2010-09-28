@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		393000ED1251E2A400BEF2F5 /* CREDITS in Resources */ = {isa = PBXBuildFile; fileRef = 393000EA1251E2A400BEF2F5 /* CREDITS */; };
+		393000EE1251E2A400BEF2F5 /* README in Resources */ = {isa = PBXBuildFile; fileRef = 393000EB1251E2A400BEF2F5 /* README */; };
+		393000EF1251E2A400BEF2F5 /* TODO in Resources */ = {isa = PBXBuildFile; fileRef = 393000EC1251E2A400BEF2F5 /* TODO */; };
 		393C6C5911CA436800608499 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 393C6C5811CA436800608499 /* SystemConfiguration.framework */; };
 		3949D4FC11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */; };
-		3982037B11D76D1200E9E6E5 /* CREDITS.txt in Resources */ = {isa = PBXBuildFile; fileRef = 3982037A11D76D1200E9E6E5 /* CREDITS.txt */; };
 		3993A06411B98A1800DB4D96 /* FMDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3993A05E11B98A1800DB4D96 /* FMDatabase.h */; };
 		3993A06511B98A1800DB4D96 /* FMDatabase.m in Sources */ = {isa = PBXBuildFile; fileRef = 3993A05F11B98A1800DB4D96 /* FMDatabase.m */; };
 		3993A06611B98A1800DB4D96 /* FMDatabaseAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 3993A06011B98A1800DB4D96 /* FMDatabaseAdditions.h */; };
@@ -54,13 +56,14 @@
 		390CB3B011C2562B0036FEB3 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Spanish; path = Spanish.lproj/Localizable.strings; sourceTree = "<group>"; };
 		390CB3BE11C25ABF0036FEB3 /* pt_BR */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = pt_BR; path = pt_BR.lproj/Localizable.strings; sourceTree = "<group>"; };
 		39196F4811D14B0600CB24C0 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
+		393000EA1251E2A400BEF2F5 /* CREDITS */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CREDITS; sourceTree = "<group>"; };
+		393000EB1251E2A400BEF2F5 /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		393000EC1251E2A400BEF2F5 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
 		393C6C5811CA436800608499 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		3949D4FB11A5480B00192538 /* mmDBLPSearchEngine_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mmDBLPSearchEngine_Prefix.pch; sourceTree = "<group>"; };
 		3971D44711C1154D00FF02EB /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		3971D44911C1158700FF02EB /* CHANGES_AND_TODO_LIST.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CHANGES_AND_TODO_LIST.txt; sourceTree = "<group>"; };
 		3971D44A11C1158700FF02EB /* CONTRIBUTORS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CONTRIBUTORS.txt; sourceTree = "<group>"; };
-		3971D49211C1253800FF02EB /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
-		3982037A11D76D1200E9E6E5 /* CREDITS.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CREDITS.txt; sourceTree = "<group>"; };
 		3993A05E11B98A1800DB4D96 /* FMDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabase.h; sourceTree = "<group>"; };
 		3993A05F11B98A1800DB4D96 /* FMDatabase.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FMDatabase.m; sourceTree = "<group>"; };
 		3993A06011B98A1800DB4D96 /* FMDatabaseAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FMDatabaseAdditions.h; sourceTree = "<group>"; };
@@ -134,13 +137,14 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				3971D49211C1253800FF02EB /* TODO.txt */,
+				393000EA1251E2A400BEF2F5 /* CREDITS */,
+				393000EB1251E2A400BEF2F5 /* README */,
+				393000EC1251E2A400BEF2F5 /* TODO */,
 				399ACDA911A54C6600D7A73F /* Strings */,
 				399ACDA211A54C0C00D7A73F /* Images */,
 				399ACDA411A54C4D00D7A73F /* Panel.xib */,
 				8D5B49B7048680CD000E48DA /* Info.plist */,
 				089C167DFE841241C02AAC07 /* InfoPlist.strings */,
-				3982037A11D76D1200E9E6E5 /* CREDITS.txt */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -335,7 +339,9 @@
 				399ACE0911A5540300D7A73F /* searchengine.icns in Resources */,
 				399ACE0A11A5540300D7A73F /* statusbar_dblp.tif in Resources */,
 				399ACE0B11A5540300D7A73F /* toolstrip_dblp.tif in Resources */,
-				3982037B11D76D1200E9E6E5 /* CREDITS.txt in Resources */,
+				393000ED1251E2A400BEF2F5 /* CREDITS in Resources */,
+				393000EE1251E2A400BEF2F5 /* README in Resources */,
+				393000EF1251E2A400BEF2F5 /* TODO in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

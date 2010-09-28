@@ -27,9 +27,8 @@ Used source code:
 	
 		Copyright (c) 2008 Flying Meat Inc.
 		
+		http://github.com/ccgus/fmdb
 		http://flyingmeat.com/
-		http://gusmueller.com/blog/archives/2005/3/22.html
-		http://code.google.com/p/flycode/source/browse/trunk/fmdb
 
 
 
@@ -41,6 +40,8 @@ Thanks to:
 	- Gus Mueller for his SQLite/ObjC wrapper code
 	
 	- Viktoriya Lahres for correcting the Russian translation
+	
+	- Yan Huang and Cornelia Genz for the Chinese translation
 	
 	- mekentosj for this great application + SDK!
 
