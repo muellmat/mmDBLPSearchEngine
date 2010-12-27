@@ -1097,8 +1097,8 @@ NSNumber *endYear;
 	[task setArguments:[NSArray arrayWithObjects: @"-p", @"80", @"dblp.l3s.de", nil]];
 	[task setStandardOutput:pipe];
 	[task launch];
-	NSString *response = [[NSString alloc] initWithData:[file readDataToEndOfFile] encoding:NSUTF8StringEncoding];
-	if ([response rangeOfString:@"open"].location == NSNotFound) {
+	NSString *connectionResponse = [[NSString alloc] initWithData:[file readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+	if ([connectionResponse rangeOfString:@"open"].location == NSNotFound) {
 		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
 		[userInfo setObject:NSLocalizedStringFromTableInBundle(
 						   @"Service Temporarily Unavailable.", 
