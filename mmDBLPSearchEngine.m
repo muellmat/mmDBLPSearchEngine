@@ -1090,7 +1090,15 @@ NSNumber *endYear;
 		 nil, 
 		 [NSBundle bundleForClass:[self class]], 
 		 @"Status message shown when plugin is connecting to the service")];
-	if (system("ping -c 2 dblp.l3s.de")) {
+	NSTask *task = [[NSTask alloc] init];
+	NSPipe *pipe = [NSPipe pipe];
+	NSFileHandle *file = [pipe fileHandleForReading];
+	[task setLaunchPath:@"/usr/local/bin/nmap"];
+	[task setArguments:[NSArray arrayWithObjects: @"-p", @"80", @"dblp.l3s.de", nil]];
+	[task setStandardOutput:pipe];
+	[task launch];
+	NSString *response = [[NSString alloc] initWithData:[file readDataToEndOfFile] encoding:NSUTF8StringEncoding];
+	if ([response rangeOfString:@"open"].location == NSNotFound) {
 		NSMutableDictionary *userInfo = [NSMutableDictionary dictionary];
 		[userInfo setObject:NSLocalizedStringFromTableInBundle(
 						   @"Service Temporarily Unavailable.", 

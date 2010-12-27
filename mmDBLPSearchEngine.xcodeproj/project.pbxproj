@@ -299,6 +299,7 @@
 			isa = PBXProject;
 			buildConfigurationList = A65AD4FA09A4AE9B0061BB58 /* Build configuration list for PBXProject "mmDBLPSearchEngine" */;
 			compatibilityVersion = "Xcode 3.0";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
